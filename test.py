@@ -1,10 +1,10 @@
-from piligraph import CircleGraph, GraphItem
+from piligraph import CircleGraph, CircleGraphItem
 
-graph = CircleGraph(radius=1000, thickness=500, emboss=-120, angle=100)
-graph.add_items(GraphItem(name="", color="00ff00", value=3))
-graph.add_items(GraphItem(name="", color="0000ff", value=10))
-graph.add_items(GraphItem(name="", color="0f0f00", value=25))
-graph.add_items(GraphItem(name="", color="00f00f", value=39))
-graph.add_items(GraphItem(name="", color="ff0000", value=40))
-
-graph.draw().show()
+graph = CircleGraph(radius=1000, thickness=500, emboss=50, angle=100)
+graph.add_items(
+    CircleGraphItem(name="", color="00ff00", value=3),
+    CircleGraphItem(name="", color="0000ff", value=10),
+    CircleGraphItem(name="", color="0f0f00", value=25),
+    CircleGraphItem(name="", color="00f00f", value=39),
+    CircleGraphItem(name="", color="ff0000", value=40),
+)

@@ -1,10 +1,24 @@
 import numpy as np
 from PIL import Image, ImageDraw
 
-from .graphitem import GraphItem
+from .color import Color
+
+
+class CircleGraphItem:
+    """Class representing item of circle diagram."""
+
+    def __init__(self,
+                 *,
+                 name: str, 
+                 color: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int],
+                 value: int | float) -> None:
+        self.name: str = name
+        self.color: Color = color if isinstance(color, Color) else Color(color)
+        self.value: int | float = value
 
 
 class CircleGraph:
+    """Class representing circle diagram."""
     def __init__(self,
                  *,
                  radius: int,
@@ -15,7 +29,7 @@ class CircleGraph:
         self.thickness: int | None = thickness
         self.angle: int = angle
         self.emboss: int | None = emboss
-        self._items: list[GraphItem] = []
+        self._items: list[CircleGraphItem] = []
 
     @property
     def radius(self) -> int:
@@ -58,22 +72,22 @@ class CircleGraph:
         self._emboss = value
 
     @property
-    def items(self) -> list[GraphItem]:
+    def items(self) -> list[CircleGraphItem]:
         return self._items
 
-    def add_items(self, *items: GraphItem) -> None:
+    def add_items(self, *items: CircleGraphItem) -> None:
         for item in items:
             self._items.append(item)
 
-    def remove_items(self, *items: GraphItem) -> None:
+    def remove_items(self, *items: CircleGraphItem) -> None:
         for item in items:
             self._items.remove(item)
 
     def draw(self) -> Image.Image:
-        image = Image.new('RGBA', (self.radius*2,)*2)
+        image = Image.new('RGBA', (self.radius * 2,)*2)
         num_items = len(self.items)
-    
-        if num_items == 0: 
+
+        if num_items == 0:
             return image
         
         values = np.array([item.value for item in self.items])
@@ -81,9 +95,9 @@ class CircleGraph:
         max_value = values.max()
         min_value = values.min()
         start_angle = self.angle or 0
-        template = image.copy()
         thickness = self.thickness
         emboss = self.emboss or 0
+        template = image.copy()
 
         m = (0 - emboss) / (max_value - min_value)
         b = emboss - m * min_value

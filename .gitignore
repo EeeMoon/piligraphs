@@ -1,4 +1,5 @@
 test/
+test.py
 __pycache__/
 venv/
 git-filter-repo
