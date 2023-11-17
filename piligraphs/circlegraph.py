@@ -6,7 +6,6 @@ from .color import Color
 
 class CircleGraphItem:
     """Class representing item of circle diagram."""
-
     def __init__(self,
                  *,
                  name: str, 
@@ -37,7 +36,9 @@ class CircleGraph:
     
     @radius.setter
     def radius(self, value: int):
-        if hasattr(self, '_thickness') and self.thickness is not None and self.thickness > value:
+        if (hasattr(self, '_thickness') 
+            and self.thickness is not None 
+            and self.thickness > value):
             raise ValueError("attribute 'radius' can not be bigger than 'thickness'")
         self._radius = value    
 
@@ -47,9 +48,14 @@ class CircleGraph:
     
     @thickness.setter
     def thickness(self, value: int | None):
-        if hasattr(self, '_radius') and self.radius < value:
+        if (value is not None 
+            and hasattr(self, '_radius') 
+            and self.radius < value):
             raise ValueError("attribute 'thickness' can not be smaller than 'radius'")
-        if hasattr(self, '_emboss') and self.emboss is not None and abs(self.emboss) * 2 < value:
+        if (value is not None 
+            and hasattr(self, '_emboss') 
+            and self.emboss is not None 
+            and abs(self.emboss) * 2 < value):
             raise ValueError("attribute 'thickness' can not be smaller than absolute value of 'emboss' twice")
         self._thickness = value
 
@@ -67,7 +73,10 @@ class CircleGraph:
     
     @emboss.setter
     def emboss(self, value: int | None):
-        if hasattr(self, '_thickness') and self.thickness is not None and self.thickness < abs(value) * 2:
+        if (value is not None 
+            and hasattr(self, '_thickness') 
+            and self.thickness is not None 
+            and self.thickness < abs(value) * 2):
             raise ValueError("attribute 'emboss' can not be bigger than half of 'thickness'")
         self._emboss = value
 
@@ -76,14 +85,43 @@ class CircleGraph:
         return self._items
 
     def add_items(self, *items: CircleGraphItem) -> None:
+        """
+        Add items to graph.
+
+        Attributes
+        ----------
+        items: `CircleGraphItem`
+            Items to add.
+
+        Raises
+        ------
+        `ValueError` if item is not of correct type.
+        """
         for item in items:
+            if not isinstance(item, CircleGraphItem):
+                raise ValueError(f"items must be instances of '{CircleGraphItem.__name__}', not {type(item).__name__}")
             self._items.append(item)
 
     def remove_items(self, *items: CircleGraphItem) -> None:
+        """
+        Remove items from graph.
+
+        Attributes
+        ----------
+        items: `CircleGraphItem`
+            Items to remove.
+
+        Raises
+        ------
+        `ValueError` if item is not present.
+        """
         for item in items:
             self._items.remove(item)
 
     def draw(self) -> Image.Image:
+        """
+        Draw a circle graph.
+        """
         image = Image.new('RGBA', (self.radius * 2,)*2)
         num_items = len(self.items)
 
@@ -116,12 +154,12 @@ class CircleGraph:
             else:
                 angle = 360 * item.value / total_value
 
-            draw.pieslice(((0 + offset,)*2, (img.width - offset,)*2), 
-                          start_angle, start_angle + angle, 
+            draw.pieslice(((0 + offset,)*2, (img.width - offset,)*2),
+                          start_angle, start_angle + angle,
                           fill=item.color.rgb)
             
             if thickness:
-                draw.ellipse(((thickness - offset,)*2, (self.radius * 2 - thickness + offset,)*2), 
+                draw.ellipse(((thickness - offset,)*2, (self.radius * 2 - thickness + offset,)*2),
                              fill=(0, 0, 0, 0))
             
             image.alpha_composite(img)

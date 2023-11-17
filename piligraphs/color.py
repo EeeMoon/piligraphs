@@ -3,7 +3,6 @@ from .utils import hex_to_rgb, int_to_rgb, rgb_to_hex, rgb_to_int
 
 class Color:
     """Class representing a 0-255 range color."""
-
     def __init__(self,
                  color: int | str | tuple[int, int, int] | tuple[int, int, int, int],
                  alpha: int = None) -> None:
