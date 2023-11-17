@@ -50,6 +50,3 @@ class Color:
     @alpha.setter
     def alpha(self, value: int):
         self._alpha = value
-
-    
-
