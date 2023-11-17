@@ -1,2 +1,4 @@
-/git-filter-repo
-/test
+test/
+__pycache__/
+venv/
+git-filter-repo
