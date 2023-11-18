@@ -3,10 +3,10 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "piligraph"
+name = "piligraphs"
 version = "1.0.0"
-homepage = "https://github.com/EeeMoon/piligraph"
-description = "Module for editing and styling text."
+homepage = "https://github.com/EeeMoon/piligraphs"
+description = "Pillow extension for drawing graphs."
 authors = ["EeeMoon"]
 license = "MIT"
 readme = "README.md"

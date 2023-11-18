@@ -1,10 +1,12 @@
+import random
+
 from .utils import hex_to_rgb, int_to_rgb, rgb_to_hex, rgb_to_int
 
 
 class Color:
     """Class representing a 0-255 range color."""
     def __init__(self,
-                 color: int | str | tuple[int, int, int] | tuple[int, int, int, int],
+                 color: int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
                  alpha: int = None) -> None:
         """
         Constructs `Color` from value.
@@ -14,7 +16,7 @@ class Color:
         color: `int` | `str` | `tuple[int, int, int]` | `tuple[int, int, int, int]`
             Color value. Can be `HEX`, `RGB`, `RGBA` or color number.
         """
-        self._alpha = 255
+        self.alpha = 255
 
         if isinstance(color, str):
             color = hex_to_rgb(color.removeprefix("#"))
@@ -24,6 +26,9 @@ class Color:
             if alpha is None:
                 self._alpha = color[3]
             color = color[:3]
+        elif color is None:
+            self.alpha = 0
+            color = (0, 0, 0)
 
         self._color: tuple[int, int, int] = color
 
@@ -55,3 +60,11 @@ class Color:
     @alpha.setter
     def alpha(self, value: int):
         self._alpha = value
+
+    @staticmethod
+    def random():
+        return Color((
+            random.randint(0, 255),
+            random.randint(0, 255),
+            random.randint(0, 255)
+        ))

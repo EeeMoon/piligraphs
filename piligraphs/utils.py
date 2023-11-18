@@ -22,8 +22,8 @@ def rgb_to_int(rgb: tuple[int, int, int]):
     return (red << 16) + (green << 8) + blue
 
 
-def circle_xy(fullradius: int, radius: int, angle: int):
+def circle_xy(radius: int, distance: int, angle: int):
     angle_radians = math.radians(angle)
-    x = fullradius + radius * math.cos(angle_radians)
-    y = fullradius + radius * math.sin(angle_radians)
+    x = radius + distance * math.cos(angle_radians)
+    y = radius + distance * math.sin(angle_radians)
     return x, y

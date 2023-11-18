@@ -9,23 +9,27 @@ class PieChartItem:
     """Class representing an item of pie chart."""
     def __init__(self,
                  *,
-                 name: str, 
-                 color: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int],
-                 value: int | float) -> None:
-        self.name: str = name
-        self.color: Color = color if isinstance(color, Color) else Color(color)
+                 name: str | None = None,
+                 color: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
+                 value: int | float = 1) -> None:
+        self.name: str | None = name
+
+        self.color: Color | None = None
+        if color is not None:
+            self.color: Color = color if isinstance(color, Color) else Color(color)
+
         self.value: int | float = value
 
 
 class PieChart:
-    """Class representing a pie chart."""
+    """Class representing a Pie chart."""
     def __init__(self,
                  *,
                  radius: int,
                  thickness: int | None = None,
                  angle: int | None = None,
                  emboss: int | None = None,
-                 border: int | None = None) -> None:
+                 space: int | None = None) -> None:
         """
         PieChart constructor.
 
@@ -42,19 +46,19 @@ class PieChart:
             If None, graph will be flat. 
             Otherwise, graph parts will be different size based on value.
             If < 0, parts with higher value will be smaller.
-        border: `int` | `None`
+        space: `int` | `None`
             Space between graph parts.
         """
         self.radius: int = radius
         self.thickness: int | None = thickness
         self.angle: int = angle
         self.emboss: int | None = emboss
-        self.border = border
+        self.space = space
         self._items: list[PieChartItem] = []
 
     @property
     def radius(self) -> int:
-        """Radius of the chart circle."""
+        """Chart circle radius."""
         return self._radius
     
     @radius.setter
@@ -62,7 +66,7 @@ class PieChart:
         if (hasattr(self, '_thickness') 
             and self.thickness is not None 
             and self.thickness > value):
-            raise ValueError("attribute 'radius' can not be bigger than 'thickness'")
+            raise ValueError("attribute 'radius' can not be smaller than 'thickness'")
         self._radius = value    
 
     @property
@@ -75,17 +79,17 @@ class PieChart:
         if (value is not None 
             and hasattr(self, '_radius') 
             and self.radius < value):
-            raise ValueError("attribute 'thickness' can not be smaller than 'radius'")
+            raise ValueError("attribute 'thickness' can not be bigger than 'radius'")
         if (value is not None 
             and hasattr(self, '_emboss') 
             and self.emboss is not None 
             and abs(self.emboss) * 2 < value):
-            raise ValueError("attribute 'thickness' can not be smaller than absolute value of 'emboss' twice")
+            raise ValueError("attribute 'thickness' can not be bigger than absolute value of 'emboss' twice")
         self._thickness = value
 
     @property
     def angle(self) -> int | None:
-        """Start angle of the chart."""
+        """Chart start angle"""
         return self._angle
     
     @angle.setter
@@ -94,7 +98,7 @@ class PieChart:
 
     @property
     def emboss(self) -> int | None:
-        """Max emboss of the graph parts."""
+        """Graph parts max emboss."""
         return self._emboss
     
     @emboss.setter
@@ -107,13 +111,13 @@ class PieChart:
         self._emboss = value
 
     @property
-    def border(self) -> int | None:
+    def space(self) -> int | None:
         """Space between chart parts."""
-        return self._border
+        return self._space
     
-    @border.setter
-    def border(self, value: int | None):
-        self._border = value
+    @space.setter
+    def space(self, value: int | None):
+        self._space = value
 
     @property
     def items(self) -> list[PieChartItem]:
@@ -156,7 +160,7 @@ class PieChart:
 
     def draw(self) -> Image.Image:
         """
-        Draw a circle graph.
+        Draw a pie chart.
         """
         image = Image.new('RGBA', (self.radius * 2,)*2)
         num_items = len(self.items)
@@ -173,12 +177,15 @@ class PieChart:
         emboss = self.emboss or 0
         template = image.copy()
 
-        m = (0 - emboss) / (max_value - min_value)
-        b = emboss - m * min_value
-        offsets = m * values + b
+        if max_value - min_value != 0:
+            m = (0 - emboss) / (max_value - min_value)
+            b = emboss - m * min_value
+            offsets = m * values + b
 
-        if emboss < 0:
-            offsets -= emboss
+            if emboss < 0:
+                offsets -= emboss
+        else:
+            offsets = [0 for _ in values]
 
         for i, item in enumerate(self.items):
             img = template.copy()
@@ -190,23 +197,25 @@ class PieChart:
             else:
                 angle = 360 * item.value / total_value
 
-            draw.pieslice(((0 + offset,)*2, (img.width - offset,)*2),
-                          start_angle, start_angle + angle,
-                          fill=item.color.rgba)
+            if item.color is not None:
+                draw.pieslice(((0 + offset,)*2, (img.width - offset,)*2),
+                            start_angle, start_angle + angle,
+                            fill=item.color.rgba)
+                
+                if self.space:
+                    draw.line(((self.radius,)*2, circle_xy(self.radius, self.radius, start_angle + angle)),
+                            fill=(0, 0, 0, 0), width=self.space)
+                    draw.line(((self.radius,)*2, circle_xy(self.radius, self.radius, start_angle)),
+                            fill=(0, 0, 0, 0), width=self.space)
+                    draw.ellipse(((self.radius - self.space / 2,)*2, (self.radius + self.space / 2,)*2),
+                                fill=(0, 0, 0, 0), width=0)
             
-            if self.border:
-                draw.line(((self.radius,)*2, circle_xy(self.radius, self.radius, start_angle + angle)),
-                          fill=(0, 0, 0, 0), width=self.border)
-                draw.line(((self.radius,)*2, circle_xy(self.radius, self.radius, start_angle)),
-                          fill=(0, 0, 0, 0), width=self.border)
-                draw.ellipse(((self.radius - self.border / 2,)*2, (self.radius + self.border / 2,)*2),
-                             fill=(0, 0, 0, 0), width=0)
+                if thickness:
+                    draw.ellipse(((thickness - offset,)*2, (self.radius * 2 - thickness + offset,)*2),
+                                fill=(0, 0, 0, 0))
             
-            if thickness:
-                draw.ellipse(((thickness - offset,)*2, (self.radius * 2 - thickness + offset,)*2),
-                             fill=(0, 0, 0, 0))
-            
-            image.alpha_composite(img)
+                image.alpha_composite(img)
+
             start_angle += angle
 
         return image
