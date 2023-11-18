@@ -1,3 +1,6 @@
+import math
+
+
 def rgb_to_hex(rgb: tuple[int, int, int]):
     return '{:02x}{:02x}{:02x}'.format(rgb[0], rgb[1], rgb[2])
 
@@ -17,3 +20,10 @@ def int_to_rgb(color: int):
 def rgb_to_int(rgb: tuple[int, int, int]):
     red, green, blue = rgb
     return (red << 16) + (green << 8) + blue
+
+
+def circle_xy(fullradius: int, radius: int, angle: int):
+    angle_radians = math.radians(angle)
+    x = fullradius + radius * math.cos(angle_radians)
+    y = fullradius + radius * math.sin(angle_radians)
+    return x, y

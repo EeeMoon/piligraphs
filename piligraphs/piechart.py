@@ -2,10 +2,11 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 from .color import Color
+from .utils import circle_xy
 
 
-class CircleGraphItem:
-    """Class representing item of circle diagram."""
+class PieChartItem:
+    """Class representing an item of pie chart."""
     def __init__(self,
                  *,
                  name: str, 
@@ -16,22 +17,44 @@ class CircleGraphItem:
         self.value: int | float = value
 
 
-class CircleGraph:
-    """Class representing circle diagram."""
+class PieChart:
+    """Class representing a pie chart."""
     def __init__(self,
                  *,
                  radius: int,
                  thickness: int | None = None,
                  angle: int | None = None,
-                 emboss: int | None = None) -> None:
+                 emboss: int | None = None,
+                 border: int | None = None) -> None:
+        """
+        PieChart constructor.
+
+        Attributes
+        ----------
+        radius: `int`
+            Radius of the chart circle.
+        thickness: `int` | `None`
+            If None, graph will be pie-shaped.
+            Otherwise, graph will be donut-shaped with specified thickness.
+        angle: `int` | `None`
+            Start angle of the chart.
+        emboss `int` | `None`
+            If None, graph will be flat. 
+            Otherwise, graph parts will be different size based on value.
+            If < 0, parts with higher value will be smaller.
+        border: `int` | `None`
+            Space between graph parts.
+        """
         self.radius: int = radius
         self.thickness: int | None = thickness
         self.angle: int = angle
         self.emboss: int | None = emboss
-        self._items: list[CircleGraphItem] = []
+        self.border = border
+        self._items: list[PieChartItem] = []
 
     @property
     def radius(self) -> int:
+        """Radius of the chart circle."""
         return self._radius
     
     @radius.setter
@@ -44,6 +67,7 @@ class CircleGraph:
 
     @property
     def thickness(self) -> int | None:
+        """Thickness of the donut-shaped graph."""
         return self._thickness
     
     @thickness.setter
@@ -61,6 +85,7 @@ class CircleGraph:
 
     @property
     def angle(self) -> int | None:
+        """Start angle of the chart."""
         return self._angle
     
     @angle.setter
@@ -69,6 +94,7 @@ class CircleGraph:
 
     @property
     def emboss(self) -> int | None:
+        """Max emboss of the graph parts."""
         return self._emboss
     
     @emboss.setter
@@ -81,10 +107,20 @@ class CircleGraph:
         self._emboss = value
 
     @property
-    def items(self) -> list[CircleGraphItem]:
+    def border(self) -> int | None:
+        """Space between chart parts."""
+        return self._border
+    
+    @border.setter
+    def border(self, value: int | None):
+        self._border = value
+
+    @property
+    def items(self) -> list[PieChartItem]:
+        """Chart items."""
         return self._items
 
-    def add_items(self, *items: CircleGraphItem) -> None:
+    def add_items(self, *items: PieChartItem) -> None:
         """
         Add items to graph.
 
@@ -98,11 +134,11 @@ class CircleGraph:
         `ValueError` if item is not of correct type.
         """
         for item in items:
-            if not isinstance(item, CircleGraphItem):
-                raise ValueError(f"items must be instances of '{CircleGraphItem.__name__}', not {type(item).__name__}")
+            if not isinstance(item, PieChartItem):
+                raise ValueError(f"items must be instances of '{PieChartItem.__name__}', not {type(item).__name__}")
             self._items.append(item)
 
-    def remove_items(self, *items: CircleGraphItem) -> None:
+    def remove_items(self, *items: PieChartItem) -> None:
         """
         Remove items from graph.
 
@@ -156,7 +192,15 @@ class CircleGraph:
 
             draw.pieslice(((0 + offset,)*2, (img.width - offset,)*2),
                           start_angle, start_angle + angle,
-                          fill=item.color.rgb)
+                          fill=item.color.rgba)
+            
+            if self.border:
+                draw.line(((self.radius,)*2, circle_xy(self.radius, self.radius, start_angle + angle)),
+                          fill=(0, 0, 0, 0), width=self.border)
+                draw.line(((self.radius,)*2, circle_xy(self.radius, self.radius, start_angle)),
+                          fill=(0, 0, 0, 0), width=self.border)
+                draw.ellipse(((self.radius - self.border / 2,)*2, (self.radius + self.border / 2,)*2),
+                             fill=(0, 0, 0, 0), width=0)
             
             if thickness:
                 draw.ellipse(((thickness - offset,)*2, (self.radius * 2 - thickness + offset,)*2),

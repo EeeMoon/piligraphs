@@ -31,6 +31,11 @@ class Color:
     def rgb(self) -> tuple[int, int, int]:
         """Get the color in `RGB` format."""
         return self._color
+    
+    @property
+    def rgba(self) -> tuple[int, int, int, int]:
+        """Get the color in `RGBA` format."""
+        return self._color + (self._alpha,)
 
     @property
     def hex(self) -> str:
