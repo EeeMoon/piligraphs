@@ -10,9 +10,9 @@ class RadarChartItem:
     def __init__(self,
                  *,
                  name: str | None = None,
-                 value: int | float = 1) -> None:
+                 weight: int | float = 1) -> None:
         self.name: str | None = name
-        self.value: int | float = value
+        self.weight: int | float = weight
 
 
 class RadarChart:
@@ -23,8 +23,9 @@ class RadarChart:
                  thickness: int | None = None,
                  fill: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
                  outline: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
-                 width: int | None = None,
-                 angle: int | None = None) -> None:
+                 point_width: int | None = None,
+                 angle: int | None = None,
+                 min_radius: int | None = None) -> None:
         self.radius: int = radius
         self.thickness: int | None = thickness
 
@@ -36,8 +37,9 @@ class RadarChart:
         if outline is not None:
             self.outline = outline if isinstance(outline, Color) else Color(outline)
 
-        self.width: int | None = width
+        self.point_width: int | None = point_width
         self.angle: int | None = angle
+        self.min_radius: int | None = min_radius
         self._items: list = []
 
     @property
@@ -47,7 +49,10 @@ class RadarChart:
     
     @radius.setter
     def radius(self, value: int):
-        self._radius = value    
+        if (hasattr(self, '_min_radius') 
+            and self.min_radius > value):
+            raise ValueError("attribute 'radius' can not be smaller than 'minimum'")
+        self._radius = value
 
     @property
     def thickness(self) -> int | None:
@@ -77,13 +82,13 @@ class RadarChart:
         self._outline = value
 
     @property
-    def width(self) -> int | None:
+    def point_width(self) -> int | None:
         """Stroke points width."""
-        return self._width
+        return self._point_width
     
-    @width.setter
-    def width(self, value: int | None):
-        self._width = value
+    @point_width.setter
+    def point_width(self, value: int | None):
+        self._point_width = value
 
     @property
     def angle(self) -> int | None:
@@ -95,11 +100,23 @@ class RadarChart:
         self._angle = value
 
     @property
+    def min_radius(self) -> int | None:
+        """Minimum distance between center and point."""
+        return self._min_radius
+    
+    @min_radius.setter
+    def min_radius(self, value: int | None):
+        if (hasattr(self, '_radius')
+            and value is not None
+            and self.radius < value):
+            raise ValueError("attribute 'min_radius' can not be bigger than 'radius'")
+        self._min_radius = value
+
+    @property
     def items(self) -> list[RadarChartItem]:
         """Chart items."""
-        return self._items
+        return self._items.copy()
         
-
     def add_items(self, *items: RadarChartItem) -> None:
         """
         Add items to graph.
@@ -145,15 +162,15 @@ class RadarChart:
         if num_items == 0:
             return image
         
-        values = np.array([item.value for item in self.items])
+        values = np.array([item.weight for item in self.items])
         max_value = values.max()
         min_value = values.min()
         angle = 360 / num_items
         start_angle = self.angle or -90
         points = []
 
-        lmax = self.radius - self.width - self.thickness
-        lmin = self.radius / 100
+        lmax = self.radius - self.point_width - self.thickness
+        lmin = self.min_radius
 
         if max_value - min_value != 0:
             m = (lmax - lmin) / (max_value - min_value)
@@ -162,7 +179,7 @@ class RadarChart:
         else:
             offsets = [lmax for _ in values]
 
-        for i, item in enumerate(self.items):
+        for i in range(len(self.items)):
             points.append(circle_xy(self.radius, offsets[i], i * angle + start_angle))
         
         points.append(points[0])
@@ -177,8 +194,8 @@ class RadarChart:
                     width=self.thickness,
                     joint='curve')
 
-            if self.width is not None:
-                offset = abs(self.width) + self.thickness / 2
+            if self.point_width is not None:
+                offset = abs(self.point_width) + self.thickness / 2
 
                 for point in points:
                     draw.ellipse(((point[0] - offset, point[1] - offset), 

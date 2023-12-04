@@ -1,12 +1,11 @@
-import random
-
 from .utils import hex_to_rgb, int_to_rgb, rgb_to_hex, rgb_to_int
 
 
 class Color:
-    """Class representing a 0-255 range color."""
+    """Class representing a 8-bit color."""
     def __init__(self,
                  color: int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
+                 /,
                  alpha: int = None) -> None:
         """
         Constructs `Color` from value.
@@ -48,7 +47,7 @@ class Color:
         return rgb_to_hex(self._color)
     
     @property
-    def num(self) -> int:
+    def number(self) -> int:
         """Get the color as number."""
         return rgb_to_int(self._color)
     
@@ -60,11 +59,3 @@ class Color:
     @alpha.setter
     def alpha(self, value: int):
         self._alpha = value
-
-    @staticmethod
-    def random():
-        return Color((
-            random.randint(0, 255),
-            random.randint(0, 255),
-            random.randint(0, 255)
-        ))
