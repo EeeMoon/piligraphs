@@ -26,21 +26,14 @@ class RadarChart:
                  point_width: int | None = None,
                  angle: int | None = None,
                  min_radius: int | None = None) -> None:
-        self.radius: int = radius
-        self.thickness: int | None = thickness
-
-        self.fill: Color | None = None
-        if fill is not None:
-            self.fill = fill if isinstance(fill, Color) else Color(fill)
-
-        self.outline: Color | None = None
-        if outline is not None:
-            self.outline = outline if isinstance(outline, Color) else Color(outline)
-
-        self.point_width: int | None = point_width
-        self.angle: int | None = angle
-        self.min_radius: int | None = min_radius
-        self._items: list = []
+        self.radius = radius
+        self.thickness = thickness
+        self.fill = Color(fill) if fill is not None else None
+        self.outline = Color(outline) if outline is not None else None
+        self.point_width = point_width
+        self.angle = angle
+        self.min_radius = min_radius
+        self._items: list[RadarChartItem] = []
 
     @property
     def radius(self) -> int:
@@ -51,7 +44,7 @@ class RadarChart:
     def radius(self, value: int):
         if (hasattr(self, '_min_radius') 
             and self.min_radius > value):
-            raise ValueError("attribute 'radius' can not be smaller than 'minimum'")
+            raise ValueError("'radius' can not be smaller than 'minimum'")
         self._radius = value
 
     @property
@@ -109,7 +102,7 @@ class RadarChart:
         if (hasattr(self, '_radius')
             and value is not None
             and self.radius < value):
-            raise ValueError("attribute 'min_radius' can not be bigger than 'radius'")
+            raise ValueError("'min_radius' can not be bigger than 'radius'")
         self._min_radius = value
 
     @property
@@ -162,9 +155,9 @@ class RadarChart:
         if num_items == 0:
             return image
         
-        values = np.array([item.weight for item in self.items])
-        max_value = values.max()
-        min_value = values.min()
+        weights = np.array([item.weight for item in self.items])
+        max_weight = weights.max()
+        min_weight = weights.min()
         angle = 360 / num_items
         start_angle = self.angle or -90
         points = []
@@ -172,12 +165,12 @@ class RadarChart:
         lmax = self.radius - self.point_width - self.thickness
         lmin = self.min_radius
 
-        if max_value - min_value != 0:
-            m = (lmax - lmin) / (max_value - min_value)
-            b = lmax - m * max_value
-            offsets = m * values + b
+        if max_weight - min_weight != 0:
+            m = (lmax - lmin) / (max_weight - min_weight)
+            b = lmax - m * max_weight
+            offsets = m * weights + b
         else:
-            offsets = [lmax for _ in values]
+            offsets = [lmax for _ in weights]
 
         for i in range(len(self.items)):
             points.append(circle_xy(self.radius, offsets[i], i * angle + start_angle))

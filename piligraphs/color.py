@@ -6,7 +6,7 @@ class Color:
     def __init__(self,
                  color: int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
                  /,
-                 alpha: int = None) -> None:
+                 alpha: int | None = None) -> None:
         """
         Constructs `Color` from value.
 
@@ -15,6 +15,11 @@ class Color:
         color: `int` | `str` | `tuple[int, int, int]` | `tuple[int, int, int, int]`
             Color value. Can be `HEX`, `RGB`, `RGBA` or color number.
         """
+        if isinstance(color, Color):
+            self._rgb = color.rgb
+            self._alpha = color.alpha
+            return
+        
         self.alpha = 255
 
         if isinstance(color, str):
@@ -29,27 +34,27 @@ class Color:
             self.alpha = 0
             color = (0, 0, 0)
 
-        self._color: tuple[int, int, int] = color
+        self._rgb: tuple[int, int, int] = color
 
     @property
     def rgb(self) -> tuple[int, int, int]:
         """Get the color in `RGB` format."""
-        return self._color
+        return self._rgb
     
     @property
     def rgba(self) -> tuple[int, int, int, int]:
         """Get the color in `RGBA` format."""
-        return self._color + (self._alpha,)
+        return self._rgb + (self._alpha,)
 
     @property
     def hex(self) -> str:
         """Get the color in `HEX` format."""
-        return rgb_to_hex(self._color)
+        return rgb_to_hex(self._rgb)
     
     @property
     def number(self) -> int:
         """Get the color as number."""
-        return rgb_to_int(self._color)
+        return rgb_to_int(self._rgb)
     
     @property
     def alpha(self) -> int:

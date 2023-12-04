@@ -13,11 +13,7 @@ class PieChartItem:
                  color: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
                  weight: int | float = 1) -> None:
         self.name: str | None = name
-
-        self.color: Color | None = None
-        if color is not None:
-            self.color: Color = color if isinstance(color, Color) else Color(color)
-
+        self.color: Color | None = Color(color) if color is not None else None
         self.weight: int | float = weight
 
 
@@ -49,10 +45,10 @@ class PieChart:
         space: `int` | `None`
             Space between graph parts.
         """
-        self.radius: int = radius
-        self.thickness: int | None = thickness
-        self.angle: int = angle
-        self.emboss: int | None = emboss
+        self.radius = radius
+        self.thickness= thickness
+        self.angle = angle
+        self.emboss = emboss
         self.space_between = space_between
         self._items: list[PieChartItem] = []
 
@@ -63,11 +59,11 @@ class PieChart:
     
     @radius.setter
     def radius(self, value: int):
-        if (hasattr(self, '_thickness') 
-            and self.thickness is not None 
+        if (hasattr(self, '_thickness')
+            and self.thickness is not None
             and self.thickness > value):
             raise ValueError("'radius' can not be smaller than 'thickness'")
-        self._radius = value    
+        self._radius = value
 
     @property
     def thickness(self) -> int | None:
@@ -168,34 +164,34 @@ class PieChart:
         if num_items == 0:
             return image
         
-        values = np.array([item.weight for item in self.items])
-        total_value = values.sum()
-        max_value = values.max()
-        min_value = values.min()
+        weights = np.array([item.weight for item in self.items])
+        total_weight = weights.sum()
+        max_weight = weights.max()
+        min_weight = weights.min()
         start_angle = self.angle or 0
         thickness = self.thickness
         emboss = self.emboss or 0
         template = image.copy()
 
-        if max_value - min_value != 0:
-            m = (0 - emboss) / (max_value - min_value)
-            b = emboss - m * min_value
-            offsets = m * values + b
+        if max_weight - min_weight != 0:
+            m = (0 - emboss) / (max_weight - min_weight)
+            b = emboss - m * min_weight
+            offsets = m * weights + b
 
             if emboss < 0:
                 offsets -= emboss
         else:
-            offsets = [0 for _ in values]
+            offsets = [0 for _ in weights]
 
         for i, item in enumerate(self.items):
             img = template.copy()
             draw = ImageDraw.Draw(img)
             offset = offsets[i]
 
-            if total_value == 0: 
+            if total_weight == 0: 
                 angle = 360 / num_items
             else:
-                angle = 360 * item.weight / total_value
+                angle = 360 * item.weight / total_weight
 
             if item.color is not None:
                 draw.pieslice(((0 + offset,)*2, (img.width - offset,)*2),
