@@ -1,20 +1,9 @@
 import numpy as np
 from PIL import Image, ImageDraw
 
+from .item import GraphItem
 from .color import Color
 from .utils import circle_xy, get_color, limit
-
-
-class PieChartItem:
-    """Class representing an item of pie chart."""
-    def __init__(self,
-                 name: str | None = None,
-                 *,
-                 color: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
-                 weight: int | float = 1) -> None:
-        self.name: str | None = name
-        self.color: Color | None = get_color(color)
-        self.weight: int | float = weight
 
 
 class PieChart:
@@ -50,7 +39,7 @@ class PieChart:
         self.angle = angle
         self.emboss = emboss
         self.space_between = space_between
-        self._items: list[PieChartItem] = []
+        self._items: list[GraphItem] = []
 
     @property
     def radius(self) -> int:
@@ -116,11 +105,11 @@ class PieChart:
         self._space_between = value
 
     @property
-    def items(self) -> list[PieChartItem]:
+    def items(self) -> list[GraphItem]:
         """Chart items."""
         return self._items
 
-    def add_items(self, *items: PieChartItem) -> None:
+    def add_items(self, *items: GraphItem) -> None:
         """
         Add items to graph.
 
@@ -134,11 +123,11 @@ class PieChart:
         `ValueError` if item is not of correct type.
         """
         for item in items:
-            if not isinstance(item, PieChartItem):
-                raise ValueError(f"items must be instances of '{PieChartItem.__name__}', not {type(item).__name__}")
+            if not isinstance(item, GraphItem):
+                raise ValueError(f"items must be instances of '{GraphItem.__name__}', not {type(item).__name__}")
             self._items.append(item)
 
-    def remove_items(self, *items: PieChartItem) -> None:
+    def remove_items(self, *items: GraphItem) -> None:
         """
         Remove items from graph.
 

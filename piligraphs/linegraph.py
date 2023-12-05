@@ -1,19 +1,10 @@
 import numpy as np
 from PIL import Image, ImageDraw
 
+from .item import GraphItem
 from .color import Color
 from .size import Size
 from .utils import get_color
-
-
-class LineGraphItem:
-    """Class representing an item of line graph."""
-    def __init__(self,
-                 *,
-                 name: str | None = None,
-                 weight: int | float = 1) -> None:
-        self.name: str | None = name
-        self.weight: int | float = weight
 
 
 class LineGraph:
@@ -30,7 +21,7 @@ class LineGraph:
         self.fill = get_color(fill)
         self.outline = get_color(outline)
         self.point_width = point_width
-        self._items: list[LineGraphItem] = []
+        self._items: list[GraphItem] = []
 
     @property
     def size(self) -> Size:
@@ -81,17 +72,17 @@ class LineGraph:
         self._point_width = value
 
     @property
-    def items(self) -> list[LineGraphItem]:
+    def items(self) -> list[GraphItem]:
         """Graph items."""
         return self._items.copy()
         
-    def add_items(self, *items: LineGraphItem) -> None:
+    def add_items(self, *items: GraphItem) -> None:
         """
         Add items to graph.
 
         Attributes
         ----------
-        items: `LineGraphItem`
+        items: `GraphItem`
             Items to add.
 
         Raises
@@ -99,17 +90,17 @@ class LineGraph:
         `ValueError` if item is not of correct type.
         """
         for item in items:
-            if not isinstance(item, LineGraphItem):
-                raise ValueError(f"items must be instances of '{LineGraphItem.__name__}', not {type(item).__name__}")
+            if not isinstance(item, GraphItem):
+                raise ValueError(f"items must be instances of '{GraphItem.__name__}', not {type(item).__name__}")
             self._items.append(item)
 
-    def remove_items(self, *items: LineGraphItem) -> None:
+    def remove_items(self, *items: GraphItem) -> None:
         """
         Remove items from graph.
 
         Attributes
         ----------
-        items: `LineGraphItem`
+        items: `GraphItem`
             Items to remove.
 
         Raises

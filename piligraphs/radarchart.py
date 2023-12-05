@@ -1,18 +1,9 @@
 import numpy as np
 from PIL import Image, ImageDraw
 
+from .item import GraphItem
 from .color import Color
 from .utils import circle_xy, get_color, limit
-
-
-class RadarChartItem:
-    """Class representing an item of radar chart."""
-    def __init__(self,
-                 *,
-                 name: str | None = None,
-                 weight: int | float = 1) -> None:
-        self.name: str | None = name
-        self.weight: int | float = weight
 
 
 class RadarChart:
@@ -33,7 +24,7 @@ class RadarChart:
         self.point_width = point_width
         self.angle = angle
         self.min_radius = min_radius
-        self._items: list[RadarChartItem] = []
+        self._items: list[GraphItem] = []
 
     @property
     def radius(self) -> int:
@@ -106,17 +97,17 @@ class RadarChart:
         self._min_radius = value
 
     @property
-    def items(self) -> list[RadarChartItem]:
+    def items(self) -> list[GraphItem]:
         """Chart items."""
         return self._items.copy()
         
-    def add_items(self, *items: RadarChartItem) -> None:
+    def add_items(self, *items: GraphItem) -> None:
         """
         Add items to graph.
 
         Attributes
         ----------
-        items: `RadarChartItem`
+        items: `GraphItem`
             Items to add.
 
         Raises
@@ -124,17 +115,17 @@ class RadarChart:
         `ValueError` if item is not of correct type.
         """
         for item in items:
-            if not isinstance(item, RadarChartItem):
-                raise ValueError(f"items must be instances of '{RadarChartItem.__name__}', not {type(item).__name__}")
+            if not isinstance(item, GraphItem):
+                raise ValueError(f"items must be instances of '{GraphItem.__name__}', not {type(item).__name__}")
             self._items.append(item)
 
-    def remove_items(self, *items: RadarChartItem) -> None:
+    def remove_items(self, *items: GraphItem) -> None:
         """
         Remove items from graph.
 
         Attributes
         ----------
-        items: `RadarChartItem`
+        items: `GraphItem`
             Items to remove.
 
         Raises
