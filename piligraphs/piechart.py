@@ -153,7 +153,7 @@ class PieChart:
         if num_items == 0:
             return image
         
-        weights = np.array([item.weight for item in self.items])
+        weights = [item.weight for item in self.items]
         total_weight = weights.sum()
         start_angle = self.angle or 0
         thickness = self.thickness

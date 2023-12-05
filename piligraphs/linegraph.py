@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw
 from .item import GraphItem
 from .color import Color
 from .size import Size
-from .utils import get_color
+from .utils import get_color, limit, interpolate
 
 
 class LineGraph:
@@ -114,4 +114,16 @@ class LineGraph:
         """
         Draw a Line graph.
         """
-        pass
+        image = Image.new('RGBA', self.size)
+        num_items = len(self.items)
+
+        if num_items == 0:
+            return image
+        
+        weights = [item.weight for item in self.items]
+
+        points = interpolate(())
+
+
+
+        return image
