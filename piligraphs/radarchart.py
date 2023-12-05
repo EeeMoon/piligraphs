@@ -2,7 +2,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 from .color import Color
-from .utils import circle_xy
+from .utils import circle_xy, get_color, limit
 
 
 class RadarChartItem:
@@ -28,8 +28,8 @@ class RadarChart:
                  min_radius: int | None = None) -> None:
         self.radius = radius
         self.thickness = thickness
-        self.fill = Color(fill) if fill is not None else None
-        self.outline = Color(outline) if outline is not None else None
+        self.fill = get_color(fill)
+        self.outline = get_color(outline)
         self.point_width = point_width
         self.angle = angle
         self.min_radius = min_radius
@@ -146,7 +146,7 @@ class RadarChart:
 
     def draw(self) -> Image.Image:
         """
-        Draw a radar chart.
+        Draw a Radar chart.
         """
         image = Image.new('RGB', (self.radius * 2,)*2)
         draw = ImageDraw.Draw(image)
@@ -156,23 +156,16 @@ class RadarChart:
             return image
         
         weights = np.array([item.weight for item in self.items])
-        max_weight = weights.max()
-        min_weight = weights.min()
         angle = 360 / num_items
         start_angle = self.angle or -90
         points = []
 
-        lmax = self.radius - self.point_width - self.thickness
-        lmin = self.min_radius
-
-        if max_weight - min_weight != 0:
-            m = (lmax - lmin) / (max_weight - min_weight)
-            b = lmax - m * max_weight
-            offsets = m * weights + b
-        else:
-            offsets = [lmax for _ in weights]
-
-        for i in range(len(self.items)):
+        offsets = limit(
+            weights,
+            self.min_radius,
+            self.radius - self.point_width - self.thickness)
+                        
+        for i in range(num_items):
             points.append(circle_xy(self.radius, offsets[i], i * angle + start_angle))
         
         points.append(points[0])

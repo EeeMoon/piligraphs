@@ -2,7 +2,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 from .color import Color
-from .utils import circle_xy
+from .utils import circle_xy, get_color, limit
 
 
 class PieChartItem:
@@ -13,7 +13,7 @@ class PieChartItem:
                  color: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
                  weight: int | float = 1) -> None:
         self.name: str | None = name
-        self.color: Color | None = Color(color) if color is not None else None
+        self.color: Color | None = get_color(color)
         self.weight: int | float = weight
 
 
@@ -156,7 +156,7 @@ class PieChart:
 
     def draw(self) -> Image.Image:
         """
-        Draw a pie chart.
+        Draw a Pie chart.
         """
         image = Image.new('RGBA', (self.radius * 2,)*2)
         num_items = len(self.items)
@@ -166,22 +166,15 @@ class PieChart:
         
         weights = np.array([item.weight for item in self.items])
         total_weight = weights.sum()
-        max_weight = weights.max()
-        min_weight = weights.min()
         start_angle = self.angle or 0
         thickness = self.thickness
         emboss = self.emboss or 0
         template = image.copy()
 
-        if max_weight - min_weight != 0:
-            m = (0 - emboss) / (max_weight - min_weight)
-            b = emboss - m * min_weight
-            offsets = m * weights + b
-
-            if emboss < 0:
-                offsets -= emboss
-        else:
-            offsets = [0 for _ in weights]
+        offsets = limit(
+            weights, 
+            0 if emboss < 0 else abs(emboss), 
+            abs(emboss) if emboss < 0 else 0)
 
         for i, item in enumerate(self.items):
             img = template.copy()
