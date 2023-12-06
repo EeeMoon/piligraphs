@@ -49,6 +49,9 @@ def get_color(color, /):
     
 
 class Interpolation(enum.Enum):
+    """
+    Interpolation type.
+    """
     LINEAR = 'linear'
     NEAREST = 'nearest'
     NEAREST_UP = 'nearest-up'
