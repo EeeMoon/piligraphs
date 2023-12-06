@@ -63,7 +63,7 @@ class Interpolation(enum.Enum):
 def interpolate(
         points: list[tuple[int, int]], 
         num: int | None = None, 
-        method: Interpolation = Interpolation.LINEAR) -> list[tuple[int, int]]:
+        kind: Interpolation = Interpolation.LINEAR) -> list[tuple[int, int]]:
     """
     Interpolate list of points to make a smooth curve.
 
@@ -73,11 +73,11 @@ def interpolate(
         List of points. Every point must be a tuple containing 2 integers: x and y.
     num: `int` | `None`
         Number of points. If `None`, double the length of the list of points is set.
-    method: `Interpolation`
+    kind: `Interpolation`
         The kind of interpolation.
     """
     x, y = zip(*points)
-    inter = interp1d(x, y, kind=method.value)
+    inter = interp1d(x, y, kind=kind.value)
 
     if not num:
         num = len(points) * 2

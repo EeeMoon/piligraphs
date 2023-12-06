@@ -48,7 +48,7 @@ class RadarChart:
         self._thickness = value
 
     @property
-    def fill(self) -> int | None:
+    def fill(self) -> Color | None:
         """Fill color."""
         return self._fill
     
@@ -57,7 +57,7 @@ class RadarChart:
         self._fill = value
 
     @property
-    def outline(self) -> int | None:
+    def outline(self) -> Color | None:
         """Outline color."""
         return self._outline
     
@@ -140,12 +140,13 @@ class RadarChart:
         Draw a Radar chart.
         """
         image = Image.new('RGB', (self.radius * 2,)*2)
-        draw = ImageDraw.Draw(image)
         num_items = len(self.items)
 
         if num_items == 0:
             return image
         
+        draw = ImageDraw.Draw(image)
+        thickness = self.thickness or self.radius / 5
         weights = np.array([item.weight for item in self.items])
         angle = 360 / num_items
         start_angle = self.angle or -90
@@ -162,17 +163,17 @@ class RadarChart:
         points.append(points[0])
         points.append(points[1])
 
-        if self.fill is not None:
+        if self.fill:
             draw.polygon(points, fill=self.fill.rgba, width=0)
 
-        if self.outline is not None:
+        if self.outline:
             draw.line(points,
                     fill=self.outline.rgba, 
-                    width=self.thickness,
+                    width=thickness,
                     joint='curve')
 
-            if self.point_width is not None:
-                offset = abs(self.point_width) + self.thickness / 2
+            if self.point_width:
+                offset = self.point_width + thickness / 2
 
                 for point in points:
                     draw.ellipse(((point[0] - offset, point[1] - offset), 
