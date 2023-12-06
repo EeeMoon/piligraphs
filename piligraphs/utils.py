@@ -1,5 +1,6 @@
 import math
 import enum
+import random
 import numpy as np
 from scipy.interpolate import interp1d
 
@@ -42,10 +43,16 @@ def get_color(color, /):
 
     if isinstance(color, Color):
         return color
+    elif color == ...:
+        return Color((
+            random.randint(0, 255),
+            random.randint(0, 255),
+            random.randint(0, 255)
+        ))
     elif color is not None:
         return Color(color)
     else:
-        return None
+        return Color((0, 0, 0, 0))
     
 
 class Interpolation(enum.Enum):

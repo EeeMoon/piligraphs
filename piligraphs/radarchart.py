@@ -1,22 +1,44 @@
 import numpy as np
 from PIL import Image, ImageDraw
 
-from .item import GraphItem
+from .basegraph import BaseGraph
 from .color import Color
 from .utils import circle_xy, get_color, limit
 
 
-class RadarChart:
+class RadarChart(BaseGraph):
     """Class representing a Radar chart."""
     def __init__(self,
                  *,
                  radius: int,
-                 thickness: int | None = None,
-                 fill: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
-                 outline: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = None,
-                 point_width: int | None = None,
-                 angle: int | None = None,
-                 min_radius: int | None = None) -> None:
+                 thickness: int = 1,
+                 fill: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = ...,
+                 outline: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = ...,
+                 point_width: int = 0,
+                 angle: int = 270,
+                 min_radius: int = 0) -> None:
+        """
+        RadarChart constructor.
+
+        Attributes
+        ----------
+        radius: `int`
+            Radius of the chart shape.
+        thickness: `int`
+            Line thickness.
+        fill: `Color`
+            Fill color.
+        outline: `Color`
+            Line color.
+        point_width: `int`
+            Point width.
+        angle: `int`
+            Start angle of the chart.
+        min_radius: `int`
+            Minimum distance between the center and the point.
+        """
+        super().__init__()
+
         self.radius = radius
         self.thickness = thickness
         self.fill = get_color(fill)
@@ -24,7 +46,6 @@ class RadarChart:
         self.point_width = point_width
         self.angle = angle
         self.min_radius = min_radius
-        self._items: list[GraphItem] = []
 
     @property
     def radius(self) -> int:
@@ -39,39 +60,39 @@ class RadarChart:
         self._radius = value
 
     @property
-    def thickness(self) -> int | None:
+    def thickness(self) -> int:
         """Stroke thickness."""
         return self._thickness
     
     @thickness.setter
-    def thickness(self, value: int | None):
+    def thickness(self, value: int):
         self._thickness = value
 
     @property
-    def fill(self) -> Color | None:
+    def fill(self) -> Color:
         """Fill color."""
         return self._fill
     
     @fill.setter
-    def fill(self, value: Color | None):
+    def fill(self, value: Color):
         self._fill = value
 
     @property
-    def outline(self) -> Color | None:
+    def outline(self) -> Color:
         """Outline color."""
         return self._outline
     
     @outline.setter
-    def outline(self, value: Color | None):
+    def outline(self, value: Color):
         self._outline = value
 
     @property
-    def point_width(self) -> int | None:
+    def point_width(self) -> int:
         """Stroke points width."""
         return self._point_width
     
     @point_width.setter
-    def point_width(self, value: int | None):
+    def point_width(self, value: int):
         self._point_width = value
 
     @property
@@ -80,65 +101,22 @@ class RadarChart:
         return self._angle
     
     @angle.setter
-    def angle(self, value: int | None):
+    def angle(self, value: int):
         self._angle = value
 
     @property
-    def min_radius(self) -> int | None:
+    def min_radius(self) -> int:
         """Minimum distance between center and point."""
         return self._min_radius
     
     @min_radius.setter
-    def min_radius(self, value: int | None):
+    def min_radius(self, value: int):
         if (hasattr(self, '_radius')
-            and value is not None
             and self.radius < value):
             raise ValueError("'min_radius' can not be bigger than 'radius'")
         self._min_radius = value
 
-    @property
-    def items(self) -> list[GraphItem]:
-        """Chart items."""
-        return self._items.copy()
-        
-    def add_items(self, *items: GraphItem) -> None:
-        """
-        Add items to graph.
-
-        Attributes
-        ----------
-        items: `GraphItem`
-            Items to add.
-
-        Raises
-        ------
-        `ValueError` if item is not of correct type.
-        """
-        for item in items:
-            if not isinstance(item, GraphItem):
-                raise ValueError(f"items must be instances of '{GraphItem.__name__}', not {type(item).__name__}")
-            self._items.append(item)
-
-    def remove_items(self, *items: GraphItem) -> None:
-        """
-        Remove items from graph.
-
-        Attributes
-        ----------
-        items: `GraphItem`
-            Items to remove.
-
-        Raises
-        ------
-        `ValueError` if item is not present.
-        """
-        for item in items:
-            self._items.remove(item)
-
     def draw(self) -> Image.Image:
-        """
-        Draw a Radar chart.
-        """
         image = Image.new('RGB', (self.radius * 2,)*2)
         num_items = len(self.items)
 
@@ -146,10 +124,10 @@ class RadarChart:
             return image
         
         draw = ImageDraw.Draw(image)
-        thickness = self.thickness or self.radius / 5
+        thickness = self.thickness
         weights = np.array([item.weight for item in self.items])
         angle = 360 / num_items
-        start_angle = self.angle or -90
+        start_angle = self.angle
         points = []
 
         offsets = limit(

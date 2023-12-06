@@ -15,23 +15,31 @@ class Color:
         """        
         self.alpha = 255
 
+        _err = ValueError("invalid color value")
+
         if isinstance(color, str):
             from .utils import hex_to_rgb
             color = hex_to_rgb(color.removeprefix("#"))
         elif isinstance(color, int):
             from .utils import num_to_rgb
             color = num_to_rgb(color)
-        elif isinstance(color, tuple) and len(color) == 4:
-            if alpha is None:
-                self.alpha = color[3]
-            color = color[:3]
+        elif isinstance(color, (tuple, list)):
+            if len(color) == 4:
+                if alpha is None:
+                    self.alpha = color[3]
+                color = color[:3]
+            elif len(color) != 3:
+                raise _err
         elif color is None:
             self.alpha = 0
             color = (0, 0, 0)
         else:
-            raise ValueError("invalid color value")
+            raise _err
     
         self._rgb: tuple[int, int, int] = color
+
+    def __bool__(self):
+        return all(self.rgba)
 
     @property
     def rgb(self) -> tuple[int, int, int]:
