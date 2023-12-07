@@ -105,7 +105,7 @@ class PieChart(BaseGraph):
             return image
         
         weights = [item.weight for item in self.items]
-        total_weight = weights.sum()
+        total_weight = sum(weights)
         start_angle = self.angle
         thickness = self.thickness
         emboss = self.emboss

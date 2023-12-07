@@ -16,8 +16,9 @@ class LineGraph(BaseGraph):
                  outline: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = ...,
                  point_width: int = 0,
                  all_points: bool = False,
-                 num: int = -1,
-                 kind: Interpolation = Interpolation.LINEAR) -> None:
+                 num_points: int = 0,
+                 interpol: Interpolation = Interpolation.LINEAR,
+                 min_height: int = 0) -> None:
         """
         LineGraph constructor.
 
@@ -36,10 +37,12 @@ class LineGraph(BaseGraph):
         all_points: `bool`
             If `True`, all points (including intermediate ones) will be drawn.
             Otherwise, only source points will be displayed.
-        num: `int`
-            Number of points. If < 0, equals to the number of items.
-        kind: `Interpolation`
+        num_points: `int`
+            Number of points. If <= 0, equals to the number of items.
+        interpol: `Interpolation`
             Kind of interpolation. Used to make a smooth curve.
+        min_height: `int`
+            Minimum height from bottom of the graph.
         """
         super().__init__()
 
@@ -49,8 +52,9 @@ class LineGraph(BaseGraph):
         self.outline = get_color(outline)
         self.point_width = point_width
         self.all_points = all_points
-        self.num = num
-        self.kind = kind
+        self.num_points = num_points
+        self.interpol = interpol
+        self.min_height = min_height
 
     @property
     def size(self) -> Size:
@@ -110,22 +114,34 @@ class LineGraph(BaseGraph):
         self._all_points = value
 
     @property
-    def num(self) -> int:
+    def num_points(self) -> int:
         """Number of points."""
-        return self._num
+        return self._num_points
     
-    @num.setter
-    def num(self, value: int):
-        self._num = value
+    @num_points.setter
+    def num_points(self, value: int):
+        self._num_points = value
 
     @property
-    def kind(self) -> Interpolation:
+    def interpol(self) -> Interpolation:
         """Kinf of interpolation."""
-        return self._kind
+        return self._interpol
     
-    @kind.setter
-    def kind(self, value: Interpolation):
-        self._kind = value
+    @interpol.setter
+    def interpol(self, value: Interpolation):
+        self._interpol = value
+
+    @property
+    def min_height(self) -> int:
+        """Min height (max y value in the image coordinates)."""
+        return self._min_height
+    
+    @min_height.setter
+    def min_height(self, value: int):
+        if (hasattr(self, '_radius')
+            and self.size.height < value):
+            raise ValueError("'min_height' can not be bigger than 'size.height'")
+        self._min_height = value
 
     def draw(self) -> Image.Image:
         image = Image.new('RGBA', tuple(self.size))
@@ -136,21 +152,21 @@ class LineGraph(BaseGraph):
         
         draw = ImageDraw.Draw(image)
         thickness = self.thickness or 1
-        num = self.num if self.num > 0 else num_items
+        num = self.num_points if self.num_points > 0 else num_items
         max_weight = max((i.weight for i in self.items))
         p_radius = self.point_width / 2 if self.point_width > 0 else thickness / 2
         limited_y = limit(
             [max_weight - item.weight for item in self.items], 
             p_radius, 
-            self.size.height-p_radius)
+            self.size.height - p_radius - self.min_height)
         space_between_points = self.size.width / (num_items - 1)
         limited_x = limit(
             [space_between_points * i for i in range(num_items)], 
             p_radius, 
-            self.size.width-p_radius)
+            self.size.width - p_radius)
         
         points = list(zip(limited_x, limited_y))
-        smooth_points = interpolate(points, num, kind=self.kind)
+        smooth_points = interpolate(points, num, kind=self.interpol)
 
         if self.fill:
             draw.polygon(
