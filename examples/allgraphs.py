@@ -2,8 +2,7 @@ import random
 import time
 from PIL import Image
 
-from piligraphs import (LineChart, RadarChart, PieChart, 
-                        GraphItem, Interpolation)
+from piligraphs import LineChart, RadarChart, PieChart, GraphItem
 
 
 # define variables
@@ -18,7 +17,7 @@ linechart = LineChart(
     thickness=10,
     point_width=20,
     num_points=len(items) * 10,
-    interpol=Interpolation.CUBIC,
+    interpol='cubic',
     min_height=100
 )
 linechart.add_items(*items)
@@ -30,7 +29,7 @@ radarchart = RadarChart(
     thickness=10,
     point_width=20,
     num_points=len(items) * 10,
-    interpol=Interpolation.CUBIC,
+    interpol='cubic',
     min_radius=100
 )
 radarchart.add_items(*items)

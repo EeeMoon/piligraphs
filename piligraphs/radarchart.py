@@ -16,7 +16,7 @@ class RadarChart(BaseGraph):
                  point_width: int = 0,
                  all_points: bool = False,
                  num_points: int = 0,
-                 interpol: Interpolation = Interpolation.LINEAR,
+                 interpol: Interpolation = 'linear',
                  angle: int = 0,
                  min_radius: int = 0) -> None:
         """

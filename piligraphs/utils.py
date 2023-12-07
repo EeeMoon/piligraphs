@@ -3,6 +3,7 @@ import enum
 import random
 import numpy as np
 from scipy.interpolate import interp1d
+from typing import Literal
 
 
 def rgb_to_hex(_rgb: tuple[int, int, int], /):
@@ -51,25 +52,23 @@ def get_color(color, /):
         return Color((0, 0, 0, 0))
     
 
-class Interpolation(enum.Enum):
-    """
-    Interpolation type.
-    """
-    LINEAR = 'linear'
-    NEAREST = 'nearest'
-    NEAREST_UP = 'nearest-up'
-    ZERO = 'zero'
-    SLINEAR = 'slinear'
-    QUADRATIC = 'quadratic'
-    CUBIC = 'cubic'
-    PREVIUOS = 'previous'
-    NEXT = 'next'
+Interpolation = Literal[
+    'linear',
+    'nearest',
+    'nearest-up',
+    'zero',
+    'slinear',
+    'quadratic',
+    'cubic',
+    'previous',
+    'next'
+]
 
 
 def interpolate(
         points: list[tuple[int, int]], 
         num: int | None = None, 
-        kind: Interpolation = Interpolation.LINEAR) -> list[tuple[int, int]]:
+        kind: Interpolation = 'linear') -> list[tuple[int, int]]:
     """
     Interpolate list of points to make a smooth curve.
 
@@ -83,7 +82,7 @@ def interpolate(
         The kind of interpolation.
     """
     x, y = zip(*points)
-    inter = interp1d(x, y, kind=kind.value)
+    inter = interp1d(x, y, kind=kind)
 
     if not num:
         num = len(points) * 2

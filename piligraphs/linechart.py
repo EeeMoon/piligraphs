@@ -17,7 +17,7 @@ class LineChart(BaseGraph):
                  point_width: int = 0,
                  all_points: bool = False,
                  num_points: int = 0,
-                 interpol: Interpolation = Interpolation.LINEAR,
+                 interpol: Interpolation = 'linear',
                  min_height: int = 0) -> None:
         """
         LineChart constructor.
