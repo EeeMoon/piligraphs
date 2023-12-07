@@ -17,8 +17,7 @@ def num_to_rgb(_num: int, /):
     return (
         (_num >> 16) & 255,
         (_num >> 8) & 255,
-        _num & 255
-    )
+        _num & 255)
 
 
 def rgb_to_num(_rgb: tuple[int, int, int], /):
@@ -130,44 +129,11 @@ def limit(
     return m * array + b
 
 
-def interpolate_circle(
-        points: list[tuple[int, int]], 
-        num: int | None = None, 
-        kind: Interpolation = Interpolation.LINEAR) -> list[tuple[int, int]]:
-    """
-    Interpolate list of points distributed around a circle to make a smooth curve.
-
-    Attributes
-    ----------
-    points: `List[Tuple[int, int]]`
-        List of points. Every point must be a tuple containing 2 integers: angle and radius.
-    num: `int` | `None`
-        Number of points. If `None`, double the length of the list of points is set.
-    kind: `Interpolation`
-        The kind of interpolation.
-    """
-    angles, radii = zip(*points)
-    angles = np.deg2rad(angles)  # Convert angles to radians
-
-    inter = interp1d(angles, radii, kind=kind.value)
-
-    if not num:
-        num = len(points) * 2
-
-    angles_new = np.linspace(min(angles), max(angles), num)
-    radii_new = np.clip(inter(angles_new), min(radii), max(radii))
-
-    x_new = radii_new * np.cos(angles_new)
-    y_new = radii_new * np.sin(angles_new)
-
-    return list(zip(x_new, y_new))
-
-
 def linear_to_circle(
         points: list[tuple[int, int]], 
         radius: int, 
         min_radius: int = 0, 
-        angle: int = 360) -> list[tuple[int, int]]:
+        angle: int = 0) -> list[tuple[int, int]]:
     """
     Convert linear points to circular.
 
@@ -180,14 +146,14 @@ def linear_to_circle(
     min_radius: `int`
         Min radius.
     angle: `int`
-        Angle.
+        Rotation angle.
     """
     y = [p[1] for p in points]
     max_y = max(y)
-    ang = angle / (len(points) - 1)
+    ang = 360 / (len(points) - 1)
     radii = limit([max_y - i for i in y], min_radius, radius)
 
     return [
-        circle_xy(radius, rad, i * ang)
+        circle_xy(radius, rad, i * ang + angle)
         for i, rad in enumerate(radii)
     ]

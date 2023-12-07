@@ -9,7 +9,7 @@ class PieChart(BaseGraph):
     def __init__(self,
                  *,
                  radius: int,
-                 thickness: int = 0,
+                 width: int = 0,
                  angle: int = 0,
                  emboss: int = 0,
                  space_between: int = 0) -> None:
@@ -20,7 +20,7 @@ class PieChart(BaseGraph):
         ----------
         radius: `int`
             Radius of the chart circle.
-        thickness: `int`
+        width: `int`
             If None, graph will be pie-shaped.
             Otherwise, graph will be donut-shaped with specified thickness.
         angle: `int`
@@ -35,7 +35,7 @@ class PieChart(BaseGraph):
         super().__init__()
 
         self.radius = radius
-        self.thickness= thickness
+        self.width = width
         self.angle = angle
         self.emboss = emboss
         self.space_between = space_between
@@ -48,24 +48,24 @@ class PieChart(BaseGraph):
     @radius.setter
     def radius(self, value: int):
         if (hasattr(self, '_thickness')
-            and self.thickness > value):
+            and self.width > value):
             raise ValueError("'radius' can not be smaller than 'thickness'")
         self._radius = value
 
     @property
-    def thickness(self) -> int:
-        """Thickness of the donut-shaped graph."""
-        return self._thickness
+    def width(self) -> int:
+        """Width of the donut-shaped graph."""
+        return self._width
     
-    @thickness.setter
-    def thickness(self, value: int):
+    @width.setter
+    def width(self, value: int):
         if (hasattr(self, '_radius') 
             and self.radius < value):
             raise ValueError("'thickness' can not be bigger than 'radius'")
         if (hasattr(self, '_emboss') 
             and abs(self.emboss) * 2 < value):
             raise ValueError("'thickness' can not be bigger than absolute value of 'emboss' twice")
-        self._thickness = value
+        self._width = value
 
     @property
     def angle(self) -> int:
@@ -84,7 +84,7 @@ class PieChart(BaseGraph):
     @emboss.setter
     def emboss(self, value: int):
         if (hasattr(self, '_thickness') 
-            and self.thickness < abs(value) * 2):
+            and self.width < abs(value) * 2):
             raise ValueError("'emboss' can not be bigger than half of 'thickness'")
         self._emboss = value
 
@@ -107,7 +107,7 @@ class PieChart(BaseGraph):
         weights = [item.weight for item in self.items]
         total_weight = sum(weights)
         start_angle = self.angle
-        thickness = self.thickness
+        width = self.width
         emboss = self.emboss
         template = image.copy()
 
@@ -139,8 +139,8 @@ class PieChart(BaseGraph):
                     draw.ellipse(((self.radius - self.space_between / 2,)*2, (self.radius + self.space_between / 2,)*2),
                                 fill=(0, 0, 0, 0), width=0)
             
-                if thickness > 0:
-                    draw.ellipse(((thickness - offset,)*2, (self.radius * 2 - thickness + offset,)*2),
+                if width > 0:
+                    draw.ellipse(((width - offset,)*2, (self.radius * 2 - width + offset,)*2),
                                 fill=(0, 0, 0, 0))
             
                 image.alpha_composite(img)

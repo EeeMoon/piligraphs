@@ -6,8 +6,8 @@ from .size import Size
 from .utils import get_color, limit, interpolate, Interpolation
 
 
-class LineGraph(BaseGraph):
-    """Class representing a Line graph."""
+class LineChart(BaseGraph):
+    """Class representing a Line chart."""
     def __init__(self,
                  *,
                  size: Size | tuple[int, int],
@@ -20,7 +20,7 @@ class LineGraph(BaseGraph):
                  interpol: Interpolation = Interpolation.LINEAR,
                  min_height: int = 0) -> None:
         """
-        LineGraph constructor.
+        LineChart constructor.
 
         Attributes
         ----------

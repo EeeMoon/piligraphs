@@ -1,9 +1,8 @@
-import numpy as np
 from PIL import Image, ImageDraw
 
 from .basegraph import BaseGraph
 from .color import Color
-from .utils import circle_xy, get_color, limit, interpolate, Interpolation, linear_to_circle
+from .utils import get_color, interpolate, Interpolation, linear_to_circle
 
 
 class RadarChart(BaseGraph):
@@ -175,7 +174,10 @@ class RadarChart(BaseGraph):
         points = list(zip([space_between_points * i for i in range(num_items)], 
                           [max_weight - item.weight for item in items]))
         smooth_points = interpolate(points, num, kind=self.interpol)
-        circle_points = linear_to_circle(smooth_points, self.radius - self.point_width, self.min_radius)
+        circle_points = linear_to_circle(smooth_points, 
+                                         self.radius - self.point_width, 
+                                         self.min_radius,
+                                         self.angle)
 
         if self.fill:
             draw.polygon(
