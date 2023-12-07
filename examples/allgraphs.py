@@ -1,21 +1,25 @@
 import random
-from PIL import Image, ImageDraw
+import time
+from PIL import Image
 
 from piligraphs import (LineChart, RadarChart, PieChart, 
                         GraphItem, Interpolation)
 
 
+# define variables
+margin = 50
+items = [GraphItem(weight=random.randint(1, 5)) for _ in range(20)]
 graphs = []
-items = [GraphItem(weight=random.randint(1, 10)) for _ in range(20)]
 
 
+# create graphs
 linechart = LineChart(
     size=(2000, 1000),
     thickness=10,
     point_width=20,
     num_points=len(items) * 10,
     interpol=Interpolation.CUBIC,
-    min_height=50
+    min_height=100
 )
 linechart.add_items(*items)
 graphs.append(linechart)
@@ -27,38 +31,41 @@ radarchart = RadarChart(
     point_width=20,
     num_points=len(items) * 10,
     interpol=Interpolation.CUBIC,
-    min_radius=50
+    min_radius=100
 )
 radarchart.add_items(*items)
 graphs.append(radarchart)
 
 
 piechart = PieChart(
-    radius=1000, 
-    width=500,
-    emboss=100,
+    radius=500, 
+    width=300,
+    emboss=50,
     space_between=10)
 piechart.add_items(*items)
 graphs.append(piechart)
 
 
-graph_images: list[Image.Image] = [graph.draw() for graph in graphs]
+def timer(func, name: str):
+    start = time.time()
+    res = func()
+    end = time.time()
+    print(f"Executed '{name}' in {end - start} seconds")
+    return res
 
+
+# display graphs
+graph_images: list[Image.Image] = [
+    timer(lambda: graph.draw(), f"{type(graph).__name__}.draw()") for graph in graphs]
 size = (
-    sum((g.width for g in graph_images)),
-    max((g.height for g in graph_images))
+    sum((g.width for g in graph_images)) + margin * (len(graph_images) + 1), 
+    max((g.height for g in graph_images)) + margin * 2
 )
+image = Image.new('RGBA', size, (0, 0, 0, 0))
 
-image = Image.new('RGBA', size, (0, 0, 0, 255))
-draw = ImageDraw.Draw(image)
-x = 0
-
+x = margin
 for graph in graph_images:
-    image.paste(graph)
-    x += graph.width
+    image.paste(graph, (x, margin), graph)
+    x += graph.width + margin
 
-image.show()
-    
-
-
-
+image.show("All graphs with the same data")

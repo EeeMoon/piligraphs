@@ -171,13 +171,15 @@ class RadarChart(BaseGraph):
         p_radius = self.point_width / 2 if self.point_width > 0 else thickness / 2
         space_between_points = image.size[0] / (num_items - 1)
       
-        points = list(zip([space_between_points * i for i in range(num_items)], 
-                          [max_weight - item.weight for item in items]))
+        points = list(zip(
+            [space_between_points * i for i in range(num_items)], 
+            [max_weight - item.weight for item in items]))
         smooth_points = interpolate(points, num, kind=self.interpol)
-        circle_points = linear_to_circle(smooth_points, 
-                                         self.radius - self.point_width, 
-                                         self.min_radius,
-                                         self.angle)
+        circle_points = linear_to_circle(
+            smooth_points, 
+            self.radius - self.point_width, 
+            self.min_radius,
+            self.angle)
 
         if self.fill:
             draw.polygon(

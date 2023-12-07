@@ -14,22 +14,19 @@ def hex_to_rgb(_hex: str, /):
 
 
 def num_to_rgb(_num: int, /):
-    return (
-        (_num >> 16) & 255,
-        (_num >> 8) & 255,
-        _num & 255)
+    return ((_num >> 16) & 255,
+            (_num >> 8) & 255,
+            _num & 255)
 
 
 def rgb_to_num(_rgb: tuple[int, int, int], /):
-    red, green, blue = _rgb
-    return (red << 16) + (green << 8) + blue
+    return (_rgb[0] << 16) + (_rgb[1] << 8) + _rgb[2]
 
 
 def circle_xy(radius: int, distance: int, angle: int):
-    angle_radians = math.radians(angle)
-    x = radius + distance * math.cos(angle_radians)
-    y = radius + distance * math.sin(angle_radians)
-    return x, y
+    rad = math.radians(angle)
+    return (radius + distance * math.cos(rad),
+            radius + distance * math.sin(rad))
 
 
 def get_color(color, /):
