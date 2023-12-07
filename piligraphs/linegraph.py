@@ -137,9 +137,10 @@ class LineGraph(BaseGraph):
         draw = ImageDraw.Draw(image)
         thickness = self.thickness or 1
         num = self.num if self.num > 0 else num_items
-        p_radius = self.point_width / 2 if self.point_width else thickness / 2
+        max_weight = max((i.weight for i in self.items))
+        p_radius = self.point_width / 2 if self.point_width > 0 else thickness / 2
         limited_y = limit(
-            [item.weight for item in self.items], 
+            [max_weight - item.weight for item in self.items], 
             p_radius, 
             self.size.height-p_radius)
         space_between_points = self.size.width / (num_items - 1)
@@ -167,8 +168,8 @@ class LineGraph(BaseGraph):
 
             for point in big_points:
                 draw.ellipse(
-                    (point[0]-p_radius, point[1]-p_radius,
-                     point[0]+p_radius, point[1]+p_radius),
+                    (point[0] - p_radius, point[1] - p_radius,
+                     point[0] + p_radius, point[1] + p_radius),
                      fill=self.outline.rgba, width=0)
 
         return image
