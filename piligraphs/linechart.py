@@ -155,10 +155,14 @@ class LineChart(BaseGraph):
         num = self.num_points if self.num_points > 0 else num_items
         max_weight = max((i.weight for i in self.items))
         p_radius = self.point_width / 2 if self.point_width > 0 else thickness / 2
-        limited_y = limit(
-            [max_weight - item.weight for item in self.items], 
-            p_radius, 
-            self.size.height - p_radius - self.min_height)
+        if max_weight == 0:
+            limited_y = [self.size.height - p_radius] * num_items
+        else:
+            limited_y = limit(
+                [max_weight - item.weight for item in self.items], 
+                p_radius, 
+                self.size.height - p_radius - self.min_height)
+
         space_between_points = self.size.width / (num_items - 1)
         limited_x = limit(
             [space_between_points * i for i in range(num_items)], 
