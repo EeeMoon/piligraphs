@@ -1,7 +1,6 @@
 import math
-import enum
-import random
 import numpy as np
+from pinkie import Color
 from scipy.interpolate import interp1d
 from typing import Literal
 
@@ -36,16 +35,10 @@ def get_color(color, /):
     -------
     `Color` or `None` if color is `None`.
     """
-    from .color import Color
-
     if isinstance(color, Color):
         return color
     elif color == ...:
-        return Color((
-            random.randint(0, 255),
-            random.randint(0, 255),
-            random.randint(0, 255)
-        ))
+        return Color.random()
     elif color is not None:
         return Color(color)
     else:

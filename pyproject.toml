@@ -4,8 +4,8 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "piligraphs"
-version = "0.0.2-1"
-homepage = "https://github.com/EeeMoon/piligraphs"
+version = "0.0.3"
+homepage = "https://github.com/eeemoon/piligraphs"
 description = "Pillow extension for drawing graphs and charts."
 authors = ["EeeMoon"]
 license = "MIT"

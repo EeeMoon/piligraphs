@@ -1,4 +1,5 @@
-from .color import Color
+from pinkie import Color
+
 from .utils import get_color
 
 

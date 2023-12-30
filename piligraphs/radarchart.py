@@ -1,7 +1,7 @@
+from pinkie import Color
 from PIL import Image, ImageDraw
 
 from .basegraph import BaseGraph
-from .color import Color
 from .utils import get_color, interpolate, Interpolation, linear_to_circle
 
 
