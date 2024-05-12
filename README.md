@@ -20,21 +20,20 @@ Creating a line chart:
 import random
 from piligraphs import LineChart, GraphItem
 
-
 # define items
 items = [
     GraphItem(weight=random.randint(1, 7)) for _ in range(10)
 ]
 
-# create a LineChart
+# create Line Chart
 linechart = LineChart(
-    size=(2000, 1000),
-    thickness=10,
+    size=(1200, 300),
+    thickness=8,
     fill=(243, 14, 95, 156),
     outline=(194, 43, 132, 256),
-    pwidth=20,
+    pwidth=15,
     onlysrc=True,
-    npoints=len(items) * 10,
+    npoints=len(items) * 8,
     interp='cubic'
 )
 
