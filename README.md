@@ -25,7 +25,7 @@ items = [
     GraphItem(weight=random.randint(1, 7)) for _ in range(10)
 ]
 
-# create Line Chart
+# create a LineChart
 linechart = LineChart(
     size=(1200, 300),
     thickness=8,
