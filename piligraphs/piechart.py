@@ -41,20 +41,24 @@ class PieChart(BaseGraph):
         self.gap = gap
 
     def draw(self) -> Image.Image:
-        w = self.radius * 2
+        radius = self.radius
+        w = radius * 2
         image = Image.new('RGBA', (w, w))
         num_items = len(self.items)
 
         if num_items == 0:
             return image
         
+        draw = ImageDraw.Draw(image)
+
         weights = [item.weight for item in self.items]
         total_weight = sum(weights)
         start_angle = self.angle
-        width = self.width
         emboss = self.emboss
+        gap = self.gap
         clear_co = (0, 0, 0, 0)
-        template = image.copy()
+        eq_angle = 360 / num_items
+        w_angle = 360 / total_weight
 
         offsets = limit(
             weights, 
@@ -62,66 +66,66 @@ class PieChart(BaseGraph):
             abs(emboss) if emboss < 0 else 0
         )
 
-        for i, item in enumerate(self.items):
-            img = template.copy()
-            draw = ImageDraw.Draw(img)
-            offset = offsets[i]
-
-            if total_weight == 0: 
-                angle = 360 / num_items
-            else:
-                angle = 360 * item.weight / total_weight
+        for num, item in enumerate(self.items):
+            offset = offsets[num]
+            angle = eq_angle if total_weight == 0 else w_angle * item.weight 
+            end_angle = start_angle + angle
 
             if item.color is not None:
                 draw.pieslice(
                     (
                         (offset, offset), 
-                        (img.width - offset,) * 2
+                        (w - offset, w - offset)
                     ),
                     start_angle, 
-                    start_angle + angle,
-                    fill=item.color.rgba)
+                    end_angle,
+                    fill=item.color.rgba,
+                    width=0
+                )
                 
-                if self.gap > 0:
+                if gap > 0 and num:
                     draw.line(
                         (
-                            (self.radius, self.radius), 
-                            circle_xy(self.radius, self.radius, start_angle + angle)
+                            (radius, radius), 
+                            circle_xy(radius, radius, start_angle)
                         ),
                         fill=clear_co, 
-                        width=self.gap
+                        width=gap
                     )
-                    draw.line(
-                        (
-                            (self.radius, self.radius), 
-                            circle_xy(self.radius, self.radius, start_angle)
-                        ),
-                        fill=clear_co, 
-                        width=self.gap
-                    )
-                    draw.ellipse(
-                        (
-                            (self.radius - self.gap / 2,) * 2, 
-                            (self.radius + self.gap / 2,) * 2
-                        ),
-                        fill=clear_co, 
+                
+                if self.width > 0:
+                    l_space = self.width - offset
+                    r_space = w - l_space
+
+                    draw.pieslice(
+                        ((l_space, l_space), (r_space, r_space)),
+                        start_angle,
+                        end_angle,
+                        fill=clear_co,
                         width=0
                     )
-            
-                if width > 0:
-                    draw.ellipse(
-                        (
-                            (width - offset,) * 2, 
-                            (self.radius * 2 - width + offset,) * 2
-                        ),
-                        fill=clear_co
-                    )
-            
-                image.alpha_composite(img)
 
             start_angle += angle
 
+        if gap:
+            draw.line(
+                (
+                    (radius, radius), 
+                    circle_xy(radius, radius, start_angle)
+                ),
+                fill=clear_co, 
+                width=gap
+            )
+            
+            half_gap = gap / 2
+
+            draw.ellipse(
+                (
+                    (radius - half_gap, radius - half_gap), 
+                    (radius + half_gap, radius + half_gap)
+                ),
+                fill=clear_co, 
+                width=0
+            )
+            
         return image
-
-
-    
