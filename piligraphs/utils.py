@@ -2,7 +2,6 @@ import math
 import numpy as np
 from pinkie import Color
 from scipy.interpolate import interp1d
-from typing import Literal
 
 
 def rgb_to_hex(_rgb: tuple[int, int, int], /):
@@ -14,9 +13,11 @@ def hex_to_rgb(_hex: str, /):
 
 
 def num_to_rgb(_num: int, /):
-    return ((_num >> 16) & 255,
-            (_num >> 8) & 255,
-            _num & 255)
+    return (
+        (_num >> 16) & 255,
+        (_num >> 8) & 255,
+        _num & 255
+    )
 
 
 def rgb_to_num(_rgb: tuple[int, int, int], /):
@@ -25,8 +26,10 @@ def rgb_to_num(_rgb: tuple[int, int, int], /):
 
 def circle_xy(radius: int, distance: int, angle: int):
     rad = math.radians(angle)
-    return (radius + distance * math.cos(rad),
-            radius + distance * math.sin(rad))
+    return (
+        radius + distance * math.cos(rad),
+        radius + distance * math.sin(rad)
+    )
 
 
 def get_color(color, /):
@@ -43,27 +46,15 @@ def get_color(color, /):
         return Color(color)
     else:
         return Color((0, 0, 0, 0))
-    
-
-Interpolation = Literal[
-    'linear',
-    'nearest',
-    'nearest-up',
-    'zero',
-    'slinear',
-    'quadratic',
-    'cubic',
-    'previous',
-    'next'
-]
 
 
 def interpolate(
-        points: list[tuple[int, int]], 
-        num: int | None = None, 
-        kind: Interpolation = 'linear') -> list[tuple[int, int]]:
+    points: list[tuple[int, int]], 
+    num: int | None = None, 
+    kind: str = 'linear'
+) -> list[tuple[int, int]]:
     """
-    Interpolate list of points to make a smooth curve.
+    Interpolate a list of points to make a smooth curve.
 
     Attributes
     ----------
@@ -87,11 +78,12 @@ def interpolate(
 
 
 def limit(
-        values: list[int | float],
-        minv: int | float,
-        maxv: int | float,
-        *,
-        copy: bool = True) -> np.ndarray:
+    values: list[int | float],
+    minv: int | float,
+    maxv: int | float,
+    *,
+    copy: bool = True
+) -> np.ndarray:
     """
     Limit array to specific range.
 
@@ -119,10 +111,11 @@ def limit(
 
 
 def linear_to_circle(
-        points: list[tuple[int, int]], 
-        radius: int, 
-        min_radius: int = 0, 
-        angle: int = 0) -> list[tuple[int, int]]:
+    points: list[tuple[int, int]], 
+    radius: int, 
+    min_radius: int = 0, 
+    angle: int = 0
+) -> list[tuple[int, int]]:
     """
     Convert linear points to circular.
 

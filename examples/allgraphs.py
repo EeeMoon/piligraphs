@@ -15,10 +15,10 @@ graphs = []
 linechart = LineChart(
     size=(2000, 1000),
     thickness=10,
-    point_width=20,
-    num_points=len(items) * 10,
+    pwidth=20,
+    npoints=len(items) * 10,
     interpol='cubic',
-    min_height=100
+    minh=100
 )
 linechart.add_items(*items)
 graphs.append(linechart)

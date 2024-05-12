@@ -5,30 +5,44 @@ from .item import GraphItem
 
 class BaseGraph:
     def __init__(self) -> None:
-        self._items: list[GraphItem] = []
+        self.items: list[GraphItem] = []
+    
+    def add_item(self, item: GraphItem, /) -> None:
+        """
+        Add an item to the graph.
+
+        Attributes
+        ----------
+        item: `GraphItem`
+            Item to add.
+        """
+        if not isinstance(item, GraphItem):
+            raise TypeError(f"items must be instances of '{GraphItem.__name__}', not {type(item).__name__}")
         
-    @property
-    def items(self) -> list[GraphItem]:
-        """Graph items."""
-        return self._items.copy()
+        self.items.append(item)
         
     def add_items(self, *items: GraphItem) -> None:
         """
-        Add items to graph.
+        Add all items to the graph.
 
         Attributes
         ----------
         items: `GraphItem`
             Items to add.
-
-        Raises
-        ------
-        `ValueError` if item is not of correct type.
         """
         for item in items:
-            if not isinstance(item, GraphItem):
-                raise ValueError(f"items must be instances of '{GraphItem.__name__}', not {type(item).__name__}")
-            self._items.append(item)
+            self.add_item(item)
+
+    def remove_item(self, item: GraphItem, /) -> None:
+        """
+        Remove the item from the graph.
+
+        Attributes
+        ----------
+        item: `GraphItem`
+            Item to remove.
+        """
+        self.items.remove(item)
 
     def remove_items(self, *items: GraphItem) -> None:
         """
@@ -38,16 +52,12 @@ class BaseGraph:
         ----------
         items: `GraphItem`
             Items to remove.
-
-        Raises
-        ------
-        `ValueError` if item is not present.
         """
         for item in items:
-            self._items.remove(item)
+            self.remove_item(item)
 
     def draw(self) -> Image.Image:
         """
-        Draw a graph.
+        Draw the graph.
         """
         raise NotImplementedError()

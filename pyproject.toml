@@ -14,4 +14,3 @@ include = ["pyproject.toml", "LICENSE"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-
