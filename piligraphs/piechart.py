@@ -11,7 +11,7 @@ class PieChart(BaseGraph):
         self,
         radius: int,
         *,
-        width: int = 0,
+        thickness: int = 0,
         angle: int = 0,
         emboss: int = 0,
         gap: int = 0
@@ -21,7 +21,7 @@ class PieChart(BaseGraph):
         ----------
         radius: `int`
             Radius of the chart circle.
-        width: `int`
+        thickness: `int`
             If None, graph will be pie-shaped.
             Otherwise, graph will be donut-shaped with specified thickness.
         angle: `int`
@@ -35,7 +35,7 @@ class PieChart(BaseGraph):
         super().__init__()
 
         self.radius = radius
-        self.width = width
+        self.thickness = thickness
         self.angle = angle
         self.emboss = emboss
         self.gap = gap
@@ -93,8 +93,8 @@ class PieChart(BaseGraph):
                         width=gap
                     )
                 
-                if self.width > 0:
-                    l_space = self.width - offset
+                if self.thickness > 0:
+                    l_space = self.thickness - offset
                     r_space = w - l_space
 
                     draw.pieslice(

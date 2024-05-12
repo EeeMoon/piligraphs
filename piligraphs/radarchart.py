@@ -118,7 +118,8 @@ class RadarChart(BaseGraph):
 
             bold_p = (circle_p[0],)
             if self.pwidth > 0:
-                bold_p = circle_p[::num//num_items] if self.onlysrc else circle_p
+                step = num // num_items
+                bold_p = circle_p[::step] if self.onlysrc and step else circle_p
 
             for p in bold_p:
                 draw.ellipse(
