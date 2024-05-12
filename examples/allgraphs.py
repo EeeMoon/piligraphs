@@ -1,23 +1,32 @@
 import random
-import time
 from PIL import Image
-
-from piligraphs import LineChart, RadarChart, PieChart, GraphItem
+from piligraphs import BaseGraph, LineChart, RadarChart, PieChart, GraphItem
 
 
 # define variables
 margin = 50
-items = [GraphItem(weight=random.randint(1, 5)) for _ in range(20)]
-graphs = []
+items = [GraphItem(
+    color=(
+        random.randint(128, 216), 
+        random.randint(128, 216), 
+        random.randint(128, 216), 
+        256
+    ), 
+    weight=random.randint(1, 5)) for _ in range(12)
+]
+graphs: list[BaseGraph] = []
 
 
 # create graphs
 linechart = LineChart(
     size=(2000, 1000),
     thickness=10,
+    fill=(23, 100, 231, 156),
+    outline=(45, 143, 197, 256),
     pwidth=20,
-    npoints=len(items) * 10,
-    interpol='cubic',
+    onlysrc=True,
+    npoints=len(items) * 5,
+    interp='cubic',
     minh=100
 )
 linechart.add_items(*items)
@@ -27,10 +36,13 @@ graphs.append(linechart)
 radarchart = RadarChart(
     radius=500,
     thickness=10,
-    point_width=20,
-    num_points=len(items) * 10,
-    interpol='cubic',
-    min_radius=100
+    fill=(167, 33, 242, 156),
+    outline=(189, 12, 234, 256),
+    pwidth=20,
+    onlysrc=True,
+    npoints=len(items),
+    interp='cubic',
+    minr=100
 )
 radarchart.add_items(*items)
 graphs.append(radarchart)
@@ -38,33 +50,25 @@ graphs.append(radarchart)
 
 piechart = PieChart(
     radius=500, 
-    width=300,
+    thickness=300,
     emboss=50,
-    space_between=10)
+    gap=10
+)
 piechart.add_items(*items)
 graphs.append(piechart)
 
 
-def timer(func, name: str):
-    start = time.time()
-    res = func()
-    end = time.time()
-    print(f"Executed '{name}' in {end - start} seconds")
-    return res
-
-
-# display graphs
-graph_images: list[Image.Image] = [
-    timer(lambda: graph.draw(), f"{type(graph).__name__}.draw()") for graph in graphs]
+# draw graphs
+images  = [g.draw() for g in graphs]
 size = (
-    sum((g.width for g in graph_images)) + margin * (len(graph_images) + 1), 
-    max((g.height for g in graph_images)) + margin * 2
+    sum((g.width for g in images)) + margin * (len(images) + 1), 
+    max((g.height for g in images)) + margin * 2
 )
 image = Image.new('RGBA', size, (0, 0, 0, 0))
 
 x = margin
-for graph in graph_images:
-    image.paste(graph, (x, margin), graph)
-    x += graph.width + margin
+for img in images:
+    image.paste(img, (x, margin), img)
+    x += img.width + margin
 
 image.show("All graphs with the same data")

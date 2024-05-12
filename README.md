@@ -4,8 +4,48 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/eeemoon/piligraphs/badge)](https://www.codefactor.io/repository/github/eeemoon/piligraphs)
 [![BuyMeACoffee](https://img.shields.io/badge/support-yellow)](https://www.buymeacoffee.com/eeemoon)
 
-[Pillow](https://github.com/python-pillow/Pillow) extension for drawing graphs and charts.
+A [Pillow](https://github.com/python-pillow/Pillow) extension for drawing graphs and charts.
 
 ![](examples/images/allgraphs.png)
 
-### You can find more examples [here](examples/)
+## Installation
+To install this module, run the following command:
+```
+pip install piligraphs
+```
+
+## Example usage
+Creating a line chart:
+```python
+import random
+from piligraphs import LineChart, GraphItem
+
+
+# define items
+items = [
+    GraphItem(weight=random.randint(1, 7)) for _ in range(10)
+]
+
+# create a LineChart
+linechart = LineChart(
+    size=(2000, 1000),
+    thickness=10,
+    fill=(243, 14, 95, 156),
+    outline=(194, 43, 132, 256),
+    pwidth=20,
+    onlysrc=True,
+    npoints=len(items) * 10,
+    interp='cubic'
+)
+
+# add items
+linechart.add_items(*items)
+
+# draw graph
+image = linechart.draw()
+image.show()
+```
+Result:
+![](examples/images/linegraph.png)
+
+You can find more examples [here.](examples/)
