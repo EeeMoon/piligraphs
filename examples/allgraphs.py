@@ -1,20 +1,22 @@
 import random
 from PIL import Image
-from piligraphs import BaseChart, LineGraph, RadarChart, PieChart, ChartItem
+from piligraphs import Chart, LineGraph, RadarChart, PieChart, Node
 
 
 # define variables
 margin = 50
-items = [ChartItem(
-    color=(
-        random.randint(128, 216), 
-        random.randint(128, 216), 
-        random.randint(128, 216), 
-        256
-    ), 
-    weight=random.randint(1, 5)) for _ in range(12)
+nodes = [
+    Node(
+        weight=random.randint(1, 5),
+        color=(
+            random.randint(128, 216), 
+            random.randint(128, 216), 
+            random.randint(128, 216), 
+            256
+        )
+    ) for _ in range(12)
 ]
-graphs: list[BaseChart] = []
+graphs: list[Chart] = []
 
 
 # create graphs
@@ -25,11 +27,11 @@ linechart = LineGraph(
     outline=(45, 143, 197, 256),
     pwidth=20,
     onlysrc=True,
-    npoints=len(items) * 5,
+    npoints=len(nodes) * 5,
     interp='cubic',
     minh=100
 )
-linechart.add_nodes(*items)
+linechart.add_nodes(*nodes)
 graphs.append(linechart)
 
 
@@ -40,11 +42,11 @@ radarchart = RadarChart(
     outline=(189, 12, 234, 256),
     pwidth=20,
     onlysrc=True,
-    npoints=len(items),
+    npoints=len(nodes),
     interp='cubic',
     minr=100
 )
-radarchart.add_items(*items)
+radarchart.add_items(*nodes)
 graphs.append(radarchart)
 
 
@@ -54,7 +56,7 @@ piechart = PieChart(
     emboss=50,
     gap=10
 )
-piechart.add_nodes(*items)
+piechart.add_nodes(*nodes)
 graphs.append(piechart)
 
 

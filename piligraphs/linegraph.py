@@ -7,7 +7,7 @@ from .utils import get_color, limit, interpolate
 
 
 class LineGraph(Graph):
-    """Class representing a Line Graph."""
+    """Class representing a line graph."""
 
     def __init__(
         self,
@@ -76,7 +76,7 @@ class LineGraph(Graph):
         draw = ImageDraw.Draw(image)
 
         w, h = self.size
-        thickness = self.thickness or 1
+        thickness = self.thickness
         num = self.npoints if self.npoints > 0 else num_nodes
         max_weight = max((i.weight for i in self.nodes))
         pwidth = self.pwidth / 2 if self.pwidth > 0 else thickness / 2

@@ -1,9 +1,8 @@
-from PIL import Image
-
+from .chart import Chart
 from .node import Node
 
 
-class Graph:
+class Graph(Chart):
     def __init__(self) -> None:
         self.nodes: list[Node] = []
     
@@ -55,9 +54,3 @@ class Graph:
         """
         for node in nodes:
             self.remove_node(node)
-
-    def draw(self) -> Image.Image:
-        """
-        Draw the graph.
-        """
-        raise NotImplementedError()

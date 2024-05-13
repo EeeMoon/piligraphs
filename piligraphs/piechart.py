@@ -5,7 +5,7 @@ from .utils import circle_xy, limit
 
 
 class PieChart(Graph):
-    """Class representing a Pie Chart."""
+    """Class representing a pie chart."""
 
     def __init__(
         self,

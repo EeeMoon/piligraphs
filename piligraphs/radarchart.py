@@ -2,12 +2,12 @@ from pinkie import Color
 from typing import Literal
 from PIL import Image, ImageDraw
 
-from .graph import BaseChart
+from .graph import Graph
 from .utils import get_color, interpolate, linear_to_circle
 
 
-class RadarChart(BaseChart):
-    """Class representing a Radar Chart."""
+class RadarChart(Graph):
+    """Class representing a radar chart."""
 
     def __init__(
         self,
@@ -83,7 +83,7 @@ class RadarChart(BaseChart):
         
         draw = ImageDraw.Draw(image)
 
-        thickness = self.thickness or 1
+        thickness = self.thickness
         num = self.npoints if self.npoints > 0 else num_nodes
         max_weight = max((i.weight for i in nodes))
         pwidth = self.pwidth / 2 if self.pwidth > 0 else thickness / 2
