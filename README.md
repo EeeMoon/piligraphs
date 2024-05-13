@@ -18,30 +18,30 @@ pip install piligraphs
 Creating a line chart:
 ```python
 import random
-from piligraphs import LineChart, GraphItem
+from piligraphs import LineGraph, Node
 
 # define items
-items = [
-    GraphItem(weight=random.randint(1, 7)) for _ in range(10)
+nodes = [
+    Node(weight=random.randint(1, 7)) for _ in range(10)
 ]
 
-# create a LineChart
-linechart = LineChart(
+# create Line Graph
+graph = LineGraph(
     size=(1200, 300),
     thickness=8,
     fill=(243, 14, 95, 156),
     outline=(194, 43, 132, 256),
     pwidth=15,
     onlysrc=True,
-    npoints=len(items) * 8,
+    npoints=len(nodes) * 8,
     interp='cubic'
 )
 
 # add items
-linechart.add_items(*items)
+graph.add_nodes(*nodes)
 
 # draw graph
-image = linechart.draw()
+image = graph.draw()
 image.show()
 ```
 Result:

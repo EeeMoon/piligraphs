@@ -1,10 +1,10 @@
 from PIL import Image, ImageDraw
 
-from .basegraph import BaseGraph
+from .graph import Graph
 from .utils import circle_xy, limit
 
 
-class PieChart(BaseGraph):
+class PieChart(Graph):
     """Class representing a Pie Chart."""
 
     def __init__(
@@ -44,20 +44,20 @@ class PieChart(BaseGraph):
         radius = self.radius
         w = radius * 2
         image = Image.new('RGBA', (w, w))
-        num_items = len(self.items)
+        num_nodes = len(self.nodes)
 
-        if num_items == 0:
+        if num_nodes == 0:
             return image
         
         draw = ImageDraw.Draw(image)
 
-        weights = [item.weight for item in self.items]
+        weights = [node.weight for node in self.nodes]
         total_weight = sum(weights)
         start_angle = self.angle
         emboss = self.emboss
         gap = self.gap
         clear_co = (0, 0, 0, 0)
-        eq_angle = 360 / num_items
+        eq_angle = 360 / num_nodes
         w_angle = 360 / total_weight
 
         offsets = limit(
@@ -66,12 +66,12 @@ class PieChart(BaseGraph):
             abs(emboss) if emboss < 0 else 0
         )
 
-        for num, item in enumerate(self.items):
+        for num, node in enumerate(self.nodes):
             offset = offsets[num]
-            angle = eq_angle if total_weight == 0 else w_angle * item.weight 
+            angle = eq_angle if total_weight == 0 else w_angle * node.weight 
             end_angle = start_angle + angle
 
-            if item.color is not None:
+            if node.color is not None:
                 draw.pieslice(
                     (
                         (offset, offset), 
@@ -79,7 +79,7 @@ class PieChart(BaseGraph):
                     ),
                     start_angle, 
                     end_angle,
-                    fill=item.color.rgba,
+                    fill=node.color.rgba,
                     width=0
                 )
                 

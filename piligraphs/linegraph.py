@@ -2,12 +2,12 @@ from pinkie import Color
 from typing import Literal
 from PIL import Image, ImageDraw
 
-from .basegraph import BaseGraph
+from .graph import Graph
 from .utils import get_color, limit, interpolate
 
 
-class LineChart(BaseGraph):
-    """Class representing a Line Chart."""
+class LineGraph(Graph):
+    """Class representing a Line Graph."""
 
     def __init__(
         self,
@@ -48,7 +48,7 @@ class LineChart(BaseGraph):
         onlysrc: `bool`
             To draw bold dots only in source points (without interpolated ones).
         npoints: `int`
-            Number of points. If <= 0, equals to the number of items.
+            Number of points. If <= 0, equals to the number of nodes.
         interp: `Interpolation`
             Kind of interpolation. Used to make a smooth curve.
         minh: `int`
@@ -68,30 +68,30 @@ class LineChart(BaseGraph):
 
     def draw(self) -> Image.Image:
         image = Image.new('RGBA', self.size)
-        num_items = len(self.items)
+        num_nodes = len(self.nodes)
 
-        if num_items == 0:
+        if num_nodes == 0:
             return image
         
         draw = ImageDraw.Draw(image)
 
         w, h = self.size
         thickness = self.thickness or 1
-        num = self.npoints if self.npoints > 0 else num_items
-        max_weight = max((i.weight for i in self.items))
+        num = self.npoints if self.npoints > 0 else num_nodes
+        max_weight = max((i.weight for i in self.nodes))
         pwidth = self.pwidth / 2 if self.pwidth > 0 else thickness / 2
 
         if max_weight == 0:
-            lim_ys = [h - pwidth] * num_items
+            lim_ys = [h - pwidth] * num_nodes
         else:
             lim_ys = limit(
-                [max_weight - item.weight for item in self.items], 
+                [max_weight - node.weight for node in self.nodes], 
                 pwidth, 
                 h - pwidth - self.minh
             )
 
         lim_xs = limit(
-            [w / (num_items - 1) * i for i in range(num_items)], 
+            [w / (num_nodes - 1) * i for i in range(num_nodes)], 
             pwidth, 
             w - pwidth
         )
@@ -109,7 +109,7 @@ class LineChart(BaseGraph):
         if self.outline:
             draw.line(smooth_p, fill=self.outline.rgba, width=thickness, joint='curve')
 
-            bald_p = (source_p[0], source_p[num_items-1])
+            bald_p = (source_p[0], source_p[num_nodes-1])
             if self.pwidth:
                 bald_p = source_p if self.onlysrc else smooth_p
 

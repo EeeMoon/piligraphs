@@ -2,11 +2,11 @@ from pinkie import Color
 from typing import Literal
 from PIL import Image, ImageDraw
 
-from .basegraph import BaseGraph
+from .graph import BaseChart
 from .utils import get_color, interpolate, linear_to_circle
 
 
-class RadarChart(BaseGraph):
+class RadarChart(BaseChart):
     """Class representing a Radar Chart."""
 
     def __init__(
@@ -49,7 +49,7 @@ class RadarChart(BaseGraph):
         onlysrc: `bool`
             To draw bold dots only in source points (without interpolated ones).
         npoints: `int`
-            Number of points. If <= 0, equals to the number of items.
+            Number of points. If <= 0, equals to the number of nodes.
         interp: `Interpolation`
             Kind of interpolation. Used to make a smooth curve.
         angle: `int`
@@ -74,23 +74,23 @@ class RadarChart(BaseGraph):
         w = self.radius * 2
         image = Image.new('RGBA', (w, w))
 
-        if len(self.items) == 0:
+        if len(self.nodes) == 0:
             return image
 
-        items = self.items.copy()
-        items.append(items[0])
-        num_items = len(items)
+        nodes = self.nodes.copy()
+        nodes.append(nodes[0])
+        num_nodes = len(nodes)
         
         draw = ImageDraw.Draw(image)
 
         thickness = self.thickness or 1
-        num = self.npoints if self.npoints > 0 else num_items
-        max_weight = max((i.weight for i in items))
+        num = self.npoints if self.npoints > 0 else num_nodes
+        max_weight = max((i.weight for i in nodes))
         pwidth = self.pwidth / 2 if self.pwidth > 0 else thickness / 2
  
         source_p = list(zip(
-            [w / (num_items - 1) * i for i in range(num_items)], 
-            [max_weight - item.weight for item in items]
+            [w / (num_nodes - 1) * i for i in range(num_nodes)], 
+            [max_weight - node.weight for node in nodes]
         ))
         smooth_p = interpolate(source_p, num, kind=self.interp)
         circle_p = linear_to_circle(
@@ -118,7 +118,7 @@ class RadarChart(BaseGraph):
 
             bold_p = (circle_p[0],)
             if self.pwidth > 0:
-                step = num // num_items
+                step = num // num_nodes
                 bold_p = circle_p[::step] if self.onlysrc and step else circle_p
 
             for p in bold_p:

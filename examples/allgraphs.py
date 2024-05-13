@@ -1,11 +1,11 @@
 import random
 from PIL import Image
-from piligraphs import BaseGraph, LineChart, RadarChart, PieChart, GraphItem
+from piligraphs import BaseChart, LineGraph, RadarChart, PieChart, ChartItem
 
 
 # define variables
 margin = 50
-items = [GraphItem(
+items = [ChartItem(
     color=(
         random.randint(128, 216), 
         random.randint(128, 216), 
@@ -14,11 +14,11 @@ items = [GraphItem(
     ), 
     weight=random.randint(1, 5)) for _ in range(12)
 ]
-graphs: list[BaseGraph] = []
+graphs: list[BaseChart] = []
 
 
 # create graphs
-linechart = LineChart(
+linechart = LineGraph(
     size=(2000, 1000),
     thickness=10,
     fill=(23, 100, 231, 156),
@@ -29,7 +29,7 @@ linechart = LineChart(
     interp='cubic',
     minh=100
 )
-linechart.add_items(*items)
+linechart.add_nodes(*items)
 graphs.append(linechart)
 
 
@@ -54,7 +54,7 @@ piechart = PieChart(
     emboss=50,
     gap=10
 )
-piechart.add_items(*items)
+piechart.add_nodes(*items)
 graphs.append(piechart)
 
 
