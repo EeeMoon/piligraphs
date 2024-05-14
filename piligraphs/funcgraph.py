@@ -14,7 +14,6 @@ class FuncGraph(Graph):
     ## WARNING
     `tan()` and similar functions can be drawn incorrectly
     since we cannot determine the asymptotes automatically.
-    
     Instead of using raw `tan()`, you should make a custom solution:
     ```
     res_x, res_y = (40, 40)
