@@ -1,10 +1,10 @@
 from PIL import Image, ImageDraw
 
-from .chart import Chart
+from .graph import NodeGraph
 from .utils import circle_xy, limit
 
 
-class PieChart(Chart):
+class PieChart(NodeGraph):
     """Class representing a pie chart."""
 
     def __init__(

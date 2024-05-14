@@ -1,6 +1,5 @@
-from .graph import *
 from .funcgraph import *
-from .chart import *
+from .graph import *
 from .linechart import *
 from .node import *
 from .piechart import *

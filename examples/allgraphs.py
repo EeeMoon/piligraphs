@@ -46,7 +46,7 @@ radarchart = RadarChart(
     interp='cubic',
     minr=100
 )
-radarchart.add_items(*nodes)
+radarchart.add_nodes(*nodes)
 graphs.append(radarchart)
 
 

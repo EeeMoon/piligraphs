@@ -2,11 +2,11 @@ from pinkie import Color
 from typing import Literal
 from PIL import Image, ImageDraw
 
-from .chart import Chart
+from .graph import NodeGraph
 from .utils import get_color, limit, interpolate
 
 
-class LineChart(Chart):
+class LineChart(NodeGraph):
     """Class representing a line chart."""
 
     def __init__(

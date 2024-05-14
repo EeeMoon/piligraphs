@@ -2,11 +2,11 @@ from pinkie import Color
 from typing import Literal
 from PIL import Image, ImageDraw
 
-from .chart import Chart
+from .graph import NodeGraph
 from .utils import get_color, interpolate, linear_to_circle
 
 
-class RadarChart(Chart):
+class RadarChart(NodeGraph):
     """Class representing a radar chart."""
 
     def __init__(
