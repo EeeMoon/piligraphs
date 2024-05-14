@@ -2,11 +2,11 @@ from pinkie import Color
 from typing import Literal
 from PIL import Image, ImageDraw
 
-from .graph import Graph
+from .chart import Chart
 from .utils import get_color, interpolate, linear_to_circle
 
 
-class RadarChart(Graph):
+class RadarChart(Chart):
     """Class representing a radar chart."""
 
     def __init__(
@@ -18,7 +18,7 @@ class RadarChart(Graph):
         outline: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = ...,
         pwidth: int = 0,
         onlysrc: bool = True,
-        npoints: int = 0,
+        npoints: int | None = None,
         interp: Literal[
             'linear',
             'nearest',
@@ -41,15 +41,15 @@ class RadarChart(Graph):
         thickness: `int`
             Line thickness.
         fill: `Color`
-            Fill color.
+            Fill color. If = `...`, generates a random color.
         outline: `Color`
-            Line color.
+            Line color. If = `...`, generates a random color.
         pwidth: `int`
             Point width.
         onlysrc: `bool`
             To draw bold dots only in source points (without interpolated ones).
-        npoints: `int`
-            Number of points. If <= 0, equals to the number of nodes.
+        npoints: `int` | `None`
+            Number of points. If `None`, equals to the number of nodes.
         interp: `Interpolation`
             Kind of interpolation. Used to make a smooth curve.
         angle: `int`
@@ -84,7 +84,7 @@ class RadarChart(Graph):
         draw = ImageDraw.Draw(image)
 
         thickness = self.thickness
-        num = self.npoints if self.npoints > 0 else num_nodes
+        num = self.npoints if self.npoints is not None else num_nodes
         max_weight = max((i.weight for i in nodes))
         pwidth = self.pwidth / 2 if self.pwidth > 0 else thickness / 2
  

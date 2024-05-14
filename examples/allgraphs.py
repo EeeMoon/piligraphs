@@ -1,6 +1,6 @@
 import random
 from PIL import Image
-from piligraphs import Chart, LineGraph, RadarChart, PieChart, Node
+from piligraphs import Graph, LineChart, RadarChart, PieChart, Node
 
 
 # define variables
@@ -16,11 +16,11 @@ nodes = [
         )
     ) for _ in range(12)
 ]
-graphs: list[Chart] = []
+graphs: list[Graph] = []
 
 
 # create graphs
-linechart = LineGraph(
+linechart = LineChart(
     size=(2000, 1000),
     thickness=10,
     fill=(23, 100, 231, 156),

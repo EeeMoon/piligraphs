@@ -2,12 +2,12 @@ from pinkie import Color
 from typing import Literal
 from PIL import Image, ImageDraw
 
-from .graph import Graph
+from .chart import Chart
 from .utils import get_color, limit, interpolate
 
 
-class LineGraph(Graph):
-    """Class representing a line graph."""
+class LineChart(Chart):
+    """Class representing a line chart."""
 
     def __init__(
         self,
@@ -40,9 +40,9 @@ class LineGraph(Graph):
         thickness: `int`
             Line thickness.
         fill: `Color`
-            Fill color. If = `...`, generates random color.
+            Fill color. If = `...`, generates a random color.
         outline: `Color`
-            Line color. If = `...`, generates random color.
+            Line color. If = `...`, generates a random color.
         pwidth: `int`
             Point width.
         onlysrc: `bool`
