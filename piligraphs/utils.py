@@ -45,7 +45,7 @@ def get_color(color, /):
     elif color is not None:
         return Color(color)
     else:
-        return Color((0, 0, 0, 0))
+        return None
 
 
 def interpolate(

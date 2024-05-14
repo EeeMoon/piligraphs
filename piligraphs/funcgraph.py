@@ -44,7 +44,7 @@ class FuncGraph(Graph):
         *,
         func: Callable[[float], float],
         thickness: int = 1,
-        outline: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = ...,
+        outline: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] = ...,
         res: tuple[int, int] = (10, 10),
         step: int | float = 1
     ) -> None:
@@ -69,9 +69,48 @@ class FuncGraph(Graph):
         self.size = size
         self.func = func
         self.thickness = thickness
-        self.outline = get_color(outline)
+        self.outline = outline
         self.res = res
         self.step = step
+
+    @property
+    def size(self) -> tuple[int, int]:
+        return self._size
+    
+    @size.setter
+    def size(self, value: tuple[int, int]):
+        if isinstance(value, tuple):
+            if len(value) != 2:
+                raise ValueError(f"size should contain 2 items, not {len(value)}")
+            if not all([isinstance(i, int) for i in value]):
+                raise 
+            self._size = value
+        else:
+            raise TypeError(f"size must be a tuple, not {type(value).__name__}")
+    
+    @property
+    def func(self):
+        return self._func
+    
+    @func.setter
+    def func(self, value: Callable[[float], float]):
+        if callable(value):
+            self._func = value
+        else:
+            raise TypeError("func must be callable")
+
+    @property
+    def outline(self) -> Color:
+        return self._outline
+    
+    @outline.setter
+    def outline(self, value: Color | int | str | tuple):
+        if isinstance(value, Color):
+            self._outline = value
+        elif value is ...:
+            self._outline = Color.random()
+        else:
+            self._outline = Color(value)
     
     def draw(self) -> Image.Image:
         image = Image.new('RGBA', self.size)
