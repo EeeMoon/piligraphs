@@ -107,7 +107,12 @@ class LineChart(NodeGraph):
             )
 
         if self.outline:
-            draw.line(smooth_p, fill=self.outline.rgba, width=thickness, joint='curve')
+            draw.line(
+                smooth_p, 
+                fill=self.outline.rgba, 
+                width=thickness, 
+                joint='curve'
+            )
 
             bald_p = (source_p[0], source_p[num_nodes-1])
             if self.pwidth:

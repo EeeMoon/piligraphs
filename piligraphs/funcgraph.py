@@ -104,7 +104,12 @@ class FuncGraph(Graph):
             if len(line) == 0:
                 continue
             
-            draw.line(line, fill=outline_rgba, width=thickness, joint='curve')
+            draw.line(
+                line,
+                fill=outline_rgba, 
+                width=thickness, 
+                joint='curve'
+            )
 
             for x, y in (line[0], line[-1]):
                 draw.ellipse(
