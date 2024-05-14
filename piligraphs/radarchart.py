@@ -86,7 +86,7 @@ class RadarChart(Chart):
         thickness = self.thickness
         num = self.npoints if self.npoints is not None else num_nodes
         max_weight = max((i.weight for i in nodes))
-        pwidth = self.pwidth / 2 if self.pwidth > 0 else thickness / 2
+        radius = self.pwidth / 2 if self.pwidth > 0 else thickness / 2
  
         source_p = list(zip(
             [w / (num_nodes - 1) * i for i in range(num_nodes)], 
@@ -123,8 +123,8 @@ class RadarChart(Chart):
 
             for p in bold_p:
                 draw.ellipse(
-                    (p[0] - pwidth, p[1] - pwidth,
-                    p[0] + pwidth, p[1] + pwidth),
+                    (p[0] - radius, p[1] - radius,
+                    p[0] + radius, p[1] + radius),
                     fill=self.outline.rgba, 
                     width=0
                 )

@@ -79,29 +79,29 @@ class LineChart(Chart):
         thickness = self.thickness
         num = self.npoints if self.npoints > 0 else num_nodes
         max_weight = max((i.weight for i in self.nodes))
-        pwidth = self.pwidth / 2 if self.pwidth > 0 else thickness / 2
-
-        if max_weight == 0:
-            lim_ys = [h - pwidth] * num_nodes
-        else:
-            lim_ys = limit(
-                [max_weight - node.weight for node in self.nodes], 
-                pwidth, 
-                h - pwidth - self.minh
-            )
+        radius = self.pwidth / 2 if self.pwidth > 0 else thickness / 2
 
         lim_xs = limit(
             [w / (num_nodes - 1) * i for i in range(num_nodes)], 
-            pwidth, 
-            w - pwidth
+            radius, 
+            w - radius
         )
+
+        if max_weight == 0:
+            lim_ys = [h - radius] * num_nodes
+        else:
+            lim_ys = limit(
+                [max_weight - node.weight for node in self.nodes], 
+                radius, 
+                h - radius - self.minh
+            )
         
         source_p = list(zip(lim_xs, lim_ys))
         smooth_p = interpolate(source_p, num, kind=self.interp)
 
         if self.fill:
             draw.polygon(
-                [(pwidth, h)] + smooth_p + [(w - pwidth, h)],
+                [(radius, h)] + smooth_p + [(w - radius, h)],
                 fill=self.fill.rgba, 
                 width=0
             )
@@ -113,11 +113,11 @@ class LineChart(Chart):
             if self.pwidth:
                 bald_p = source_p if self.onlysrc else smooth_p
 
-            for p in bald_p:
+            for x, y in bald_p:
                 draw.ellipse(
                     (
-                        p[0] - pwidth, p[1] - pwidth,
-                        p[0] + pwidth, p[1] + pwidth
+                        (x - radius, y - radius),
+                        (x + radius, y + radius)
                     ),
                     fill=self.outline.rgba, 
                     width=0
