@@ -2,6 +2,20 @@ import math
 import numpy as np
 from pinkie import Color
 from scipy.interpolate import interp1d
+from typing import Literal
+
+
+Interpolation = Literal[
+    'linear',
+    'nearest',
+    'nearest-up',
+    'zero',
+    'slinear',
+    'quadratic',
+    'cubic',
+    'previous',
+    'next'
+]
 
 
 def rgb_to_hex(_rgb: tuple[int, int, int], /):
@@ -30,22 +44,6 @@ def circle_xy(radius: int, distance: int, angle: int):
         radius + distance * math.cos(rad),
         radius + distance * math.sin(rad)
     )
-
-
-def get_color(color, /):
-    """
-    Returns
-    -------
-    `Color` or `None` if color is `None`.
-    """
-    if isinstance(color, Color):
-        return color
-    elif color == ...:
-        return Color.random()
-    elif color is not None:
-        return Color(color)
-    else:
-        return None
 
 
 def interpolate(
