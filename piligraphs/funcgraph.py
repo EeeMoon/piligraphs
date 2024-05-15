@@ -46,7 +46,7 @@ class FuncGraph(Graph):
         thickness: int = 1,
         outline: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] = ...,
         res: tuple[int, int] = (10, 10),
-        step: int | float = 1
+        npoints: int | None = None
     ) -> None:
         """
         Attributes
@@ -61,8 +61,10 @@ class FuncGraph(Graph):
             Line color. If = `...`, generates a random color.
         res: `tuple[int, int]`
             Numbers of points from the center to x and y end respectively.
-        step: `int` | `float`
-            Quality of the graph. Lower value = smoother result.
+            Higher value = smaller scale.
+        npoints: `int` | `None`
+            Total number of points. Higher value = smoother result.
+            If `None`, equals to image width divided by half of thickness.
         """
         super().__init__()
 
@@ -71,25 +73,25 @@ class FuncGraph(Graph):
         self.thickness = thickness
         self.outline = outline
         self.res = res
-        self.step = step
+        self.npoints = npoints
 
     @property
     def size(self) -> tuple[int, int]:
+        """Image width and height."""
         return self._size
     
     @size.setter
     def size(self, value: tuple[int, int]):
         if isinstance(value, tuple):
             if len(value) != 2:
-                raise ValueError(f"size should contain 2 items, not {len(value)}")
-            if not all([isinstance(i, int) for i in value]):
-                raise 
+                raise ValueError("size should contain 2 items")
             self._size = value
         else:
             raise TypeError(f"size must be a tuple, not {type(value).__name__}")
     
     @property
-    def func(self):
+    def func(self) -> Callable[[float], float]:
+        """Graph function."""
         return self._func
     
     @func.setter
@@ -98,9 +100,22 @@ class FuncGraph(Graph):
             self._func = value
         else:
             raise TypeError("func must be callable")
+        
+    @property
+    def thickness(self) -> int:
+        """Line thickness"""
+        return self._thickness
+    
+    @thickness.setter
+    def thickness(self, value: int):
+        if isinstance(value, int):
+            self._thickness = value
+        else:
+            raise TypeError(f"thickness must be an int, not {type(value).__name__}")
 
     @property
     def outline(self) -> Color:
+        """Line color."""
         return self._outline
     
     @outline.setter
@@ -111,6 +126,32 @@ class FuncGraph(Graph):
             self._outline = Color.random()
         else:
             self._outline = Color(value)
+
+    @property
+    def res(self) -> tuple[int, int]:
+        """Number of points from the center to x and y edge."""
+        return self._res
+    
+    @res.setter
+    def res(self, value: tuple[int, int]):
+        if isinstance(value, tuple):
+            if len(value) != 2:
+                raise ValueError(f"res should contain 2 items")
+            self._res = value
+        else:
+            raise TypeError(f"res must be a tuple, not {type(value).__name__}")
+
+    @property
+    def npoints(self) -> int | None:
+        """Number of points."""
+        return self._npoints
+    
+    @npoints.setter
+    def npoints(self, value: int | None):
+        if isinstance(value, int) or value is None:
+            self._npoints = value
+        else:
+            raise TypeError(f"npoints must be an int or None, not {type(value).__name__}")
     
     def draw(self) -> Image.Image:
         image = Image.new('RGBA', self.size)
@@ -119,12 +160,13 @@ class FuncGraph(Graph):
         w, h = self.size
         func = self.func
         thickness = self.thickness
-        radius = thickness // 2
+        radius = thickness / 2
         res_x, res_y = self.res
         outline_rgba = self.outline.rgba
+        step = w / self.npoints if self.npoints else w / radius
         lines: list[list[tuple[float, float]]] = [[]]
         
-        for x in np.arange(radius, w - radius, self.step):
+        for x in np.arange(radius, w - radius, step):
             try:
                 x_val = (x / w - 0.5) * 2 * res_x
                 y_val = func(x_val)

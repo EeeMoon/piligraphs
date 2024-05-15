@@ -1,9 +1,8 @@
 from pinkie import Color
-from typing import Literal
 from PIL import Image, ImageDraw
 
 from .graph import NodeGraph
-from .utils import get_color, limit, interpolate
+from .utils import get_color, limit, interpolate, Interpolation
 
 
 class LineChart(NodeGraph):
@@ -18,18 +17,8 @@ class LineChart(NodeGraph):
         outline: Color | int | str | tuple[int, int, int] | tuple[int, int, int, int] | None = ...,
         pwidth: int = 0,
         onlysrc: bool = False,
-        npoints: int = 0,
-        interp: Literal[
-            'linear',
-            'nearest',
-            'nearest-up',
-            'zero',
-            'slinear',
-            'quadratic',
-            'cubic',
-            'previous',
-            'next'
-        ] = 'linear',
+        npoints: int | None = None,
+        interp: Interpolation = 'linear',
         minh: int = 0
     ) -> None:
         """
@@ -39,9 +28,9 @@ class LineChart(NodeGraph):
             Image width and height.
         thickness: `int`
             Line thickness.
-        fill: `Color`
+        fill: `Color` | `None`
             Fill color. If = `...`, generates a random color.
-        outline: `Color`
+        outline: `Color` | `None`
             Line color. If = `...`, generates a random color.
         pwidth: `int`
             Point width.
@@ -49,7 +38,7 @@ class LineChart(NodeGraph):
             To draw bold dots only in source points (without interpolated ones).
         npoints: `int`
             Number of points. If <= 0, equals to the number of nodes.
-        interp: `Interpolation`
+        interp: `str`
             Kind of interpolation. Used to make a smooth curve.
         minh: `int`
             Minimum height from the bottom of the graph.
@@ -58,13 +47,127 @@ class LineChart(NodeGraph):
 
         self.size = size
         self.thickness = thickness
-        self.fill = get_color(fill)
-        self.outline = get_color(outline)
+        self.fill = fill
+        self.outline = outline
         self.pwidth = pwidth
         self.onlysrc = onlysrc
         self.npoints = npoints
         self.interp = interp
         self.minh = minh
+
+    @property
+    def size(self) -> tuple[int, int]:
+        """Image width and height."""
+        return self._size
+    
+    @size.setter
+    def size(self, value: tuple[int, int]):
+        if isinstance(value, tuple):
+            if len(value) != 2:
+                raise ValueError("size should contain 2 items")
+            self._size = value
+        else:
+            raise TypeError(f"size must be a tuple, not {type(value).__name__}")
+        
+    @property
+    def thickness(self) -> int:
+        """Line thickness."""
+        return self._thickness
+    
+    @thickness.setter
+    def thickness(self, value: int):
+        if isinstance(value, int):
+            self._thickness = value
+        else:
+            raise TypeError(f"thickness must be an int, not {type(value).__name__}")
+
+    @property
+    def fill(self) -> Color | None:
+        """Shape color. If `None`, no shape will be drawn."""
+        return self._fill
+    
+    @fill.setter
+    def fill(self, value: Color | int | str | tuple | None):
+        if isinstance(value, Color) or value is None:
+            self._fill = value
+        elif value is ...:
+            self._fill = Color.random()
+        else:
+            self._fill = Color(value)
+
+    @property
+    def outline(self) -> Color | None:
+        """Line color. If `None`, no line will be drawn."""
+        return self._outline
+    
+    @outline.setter
+    def outline(self, value: Color | int | str | tuple | None):
+        if isinstance(value, Color) or value is None:
+            self._outline = value
+        elif value is ...:
+            self._outline = Color.random()
+        else:
+            self._outline = Color(value)
+
+    @property
+    def pwidth(self) -> int:
+        """Point width."""
+        return self._pwidth
+    
+    @pwidth.setter
+    def pwidth(self, value: int):
+        if isinstance(value, int):
+            self._pwidth = value
+        else:
+            raise TypeError(f"pwidth must be an int, not {type(value).__name__}")
+    
+    @property
+    def onlysrc(self) -> bool:
+        """To draw only source points without interpolated ones."""
+        return self._onlysrc
+    
+    @onlysrc.setter
+    def onlysrc(self, value: bool):
+        if isinstance(value, bool):
+            self._onlysrc = value
+        else:
+            raise TypeError(f"onlysrc must be a bool, not {type(value).__name__}")
+
+    @property
+    def npoints(self) -> int | None:
+        """Number of points."""
+        return self._npoints
+    
+    @npoints.setter
+    def npoints(self, value: int | None):
+        if isinstance(value, int) or value is None:
+            self._npoints = value
+        else:
+            raise TypeError(f"npoints must be an int or None, not {type(value).__name__}")
+        
+    @property
+    def interp(self) -> Interpolation:
+        """Kind of interpolation."""
+        return self._interp
+    
+    @interp.setter
+    def interp(self, value: Interpolation):
+        if isinstance(value, Interpolation):
+            self._interp = value
+        else:
+            raise TypeError("interp must be a valid string")
+    
+    @property
+    def minh(self) -> int:
+        """Minimal point height."""
+        return self._minh
+    
+    @minh.setter
+    def minh(self, value: int):
+        if isinstance(value, int):
+            self._minh = value
+        else:
+            raise TypeError(f"minh must be an int, not {type(value).__name__}")
 
     def draw(self) -> Image.Image:
         image = Image.new('RGBA', self.size)
@@ -77,7 +180,7 @@ class LineChart(NodeGraph):
 
         w, h = self.size
         thickness = self.thickness
-        num = self.npoints if self.npoints > 0 else num_nodes
+        num = self.npoints if self.npoints else num_nodes
         max_weight = max((i.weight for i in self.nodes))
         radius = self.pwidth / 2 if self.pwidth > 0 else thickness / 2
 

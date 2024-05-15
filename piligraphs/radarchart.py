@@ -3,7 +3,7 @@ from typing import Literal
 from PIL import Image, ImageDraw
 
 from .graph import NodeGraph
-from .utils import get_color, interpolate, linear_to_circle
+from .utils import get_color, interpolate, linear_to_circle, Interpolation
 
 
 class RadarChart(NodeGraph):
@@ -19,18 +19,8 @@ class RadarChart(NodeGraph):
         pwidth: int = 0,
         onlysrc: bool = True,
         npoints: int | None = None,
-        interp: Literal[
-            'linear',
-            'nearest',
-            'nearest-up',
-            'zero',
-            'slinear',
-            'quadratic',
-            'cubic',
-            'previous',
-            'next'
-        ] = 'linear',
-        angle: int = 0,
+        interp: Interpolation = 'linear',
+        angle: int | float = 0,
         minr: int = 0
     ) -> None:
         """
@@ -50,9 +40,9 @@ class RadarChart(NodeGraph):
             To draw bold dots only in source points (without interpolated ones).
         npoints: `int` | `None`
             Number of points. If `None`, equals to the number of nodes.
-        interp: `Interpolation`
+        interp: `str`
             Kind of interpolation. Used to make a smooth curve.
-        angle: `int`
+        angle: `int` | `float`
             Start angle of the chart.
         minr: `int`
             Minimum distance between the center and a point.
@@ -61,14 +51,138 @@ class RadarChart(NodeGraph):
 
         self.radius = radius
         self.thickness = thickness
-        self.fill = get_color(fill)
-        self.outline = get_color(outline)
+        self.fill = fill
+        self.outline = outline
         self.pwidth = pwidth
         self.onlysrc = onlysrc
         self.npoints = npoints
         self.interp = interp
         self.angle = angle
         self.minr = minr
+
+    @property
+    def radius(self) -> int:
+        """Chart radius."""
+        return self._radius
+    
+    @radius.setter
+    def radius(self, value: int):
+        if isinstance(value, int):
+            self._radius = value
+        else:
+            raise TypeError(f"radius must be an int, not {type(value).__name__}")
+        
+    @property
+    def thickness(self) -> int:
+        """Line thickness."""
+        return self._thickness
+    
+    @thickness.setter
+    def thickness(self, value: int):
+        if isinstance(value, int):
+            self._thickness = value
+        else:
+            raise TypeError(f"thickness must be an int, not {type(value).__name__}")
+
+    @property
+    def fill(self) -> Color | None:
+        """Shape color. If `None`, no shape will be drawn."""
+        return self._fill
+    
+    @fill.setter
+    def fill(self, value: Color | int | str | tuple | None):
+        if isinstance(value, Color) or value is None:
+            self._fill = value
+        elif value is ...:
+            self._fill = Color.random()
+        else:
+            self._fill = Color(value)
+
+    @property
+    def outline(self) -> Color | None:
+        """Line color. If `None`, no line will be drawn."""
+        return self._outline
+    
+    @outline.setter
+    def outline(self, value: Color | int | str | tuple | None):
+        if isinstance(value, Color) or value is None:
+            self._outline = value
+        elif value is ...:
+            self._outline = Color.random()
+        else:
+            self._outline = Color(value)
+
+    @property
+    def pwidth(self) -> int:
+        """Point width."""
+        return self._pwidth
+    
+    @pwidth.setter
+    def pwidth(self, value: int):
+        if isinstance(value, int):
+            self._pwidth = value
+        else:
+            raise TypeError(f"pwidth must be an int, not {type(value).__name__}")
+    
+    @property
+    def onlysrc(self) -> bool:
+        """To draw only source points without interpolated ones."""
+        return self._onlysrc
+    
+    @onlysrc.setter
+    def onlysrc(self, value: bool):
+        if isinstance(value, bool):
+            self._onlysrc = value
+        else:
+            raise TypeError(f"onlysrc must be a bool, not {type(value).__name__}")
+
+    @property
+    def npoints(self) -> int | None:
+        """Number of points."""
+        return self._npoints
+    
+    @npoints.setter
+    def npoints(self, value: int | None):
+        if isinstance(value, int) or value is None:
+            self._npoints = value
+        else:
+            raise TypeError(f"npoints must be an int or None, not {type(value).__name__}")
+        
+    @property
+    def interp(self) -> Interpolation:
+        """Kind of interpolation."""
+        return self._interp
+    
+    @interp.setter
+    def interp(self, value: Interpolation):
+        if isinstance(value, Interpolation):
+            self._interp = value
+        else:
+            raise TypeError("interp must be a valid string")
+    
+    @property
+    def angle(self) -> int | float:
+        """Start angle."""
+        return self._angle
+    
+    @angle.setter
+    def angle(self, value: int | float):
+        if isinstance(value, (int, float)):
+            self._angle = value
+        else:
+            raise TypeError(f"angle must be an int or float, not {type(value).__name__}")
+        
+    @property
+    def minr(self) -> int:
+        """Minimal distance from center to point."""
+        return self._minr
+    
+    @minr.setter
+    def minr(self, value: int):
+        if isinstance(value, int):
+            self._minr = value
+        else:
+            raise TypeError(f"minr must be an int, not {type(value).__name__}")
 
     def draw(self) -> Image.Image:
         w = self.radius * 2
