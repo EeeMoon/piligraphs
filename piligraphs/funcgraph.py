@@ -4,7 +4,6 @@ from typing import Callable
 from PIL import Image, ImageDraw
 
 from .graph import Graph
-from .utils import get_color
 
 
 class FuncGraph(Graph):

@@ -1,9 +1,8 @@
 from pinkie import Color
-from typing import Literal
 from PIL import Image, ImageDraw
 
 from .graph import NodeGraph
-from .utils import get_color, interpolate, linear_to_circle, Interpolation
+from .utils import interpolate, linear_to_circle, Interpolation
 
 
 class RadarChart(NodeGraph):

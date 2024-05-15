@@ -2,7 +2,7 @@ from pinkie import Color
 from PIL import Image, ImageDraw
 
 from .graph import NodeGraph
-from .utils import get_color, limit, interpolate, Interpolation
+from .utils import limit, interpolate, Interpolation
 
 
 class LineChart(NodeGraph):
