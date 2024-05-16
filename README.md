@@ -6,7 +6,7 @@
 
 A [Pillow](https://github.com/python-pillow/Pillow) extension for drawing graphs and charts.
 
-![](examples/images/allgraphs.png)
+![](https://github.com/eeemoon/piligraphs/raw/master/examples/images/allgraphs.png)
 
 ## Installation
 To install this module, run the following command:
@@ -45,6 +45,6 @@ image = chart.draw()
 image.show()
 ```
 Result:
-![](examples/images/linegraph.png)
+![](https://github.com/eeemoon/piligraphs/raw/master/examples/images/linegraph.png)
 
-You can find more examples [here.](examples/)
+You can find more examples [here.](https://github.com/eeemoon/piligraphs/raw/master/examples)
