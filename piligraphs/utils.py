@@ -1,6 +1,5 @@
 import math
 import numpy as np
-from pinkie import Color
 from scipy.interpolate import interp1d
 from typing import Literal
 
