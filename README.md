@@ -18,15 +18,15 @@ pip install piligraphs
 Creating a line chart:
 ```python
 import random
-from piligraphs import LineGraph, Node
+from piligraphs import LineChart, Node
 
-# define items
+# define nodes
 nodes = [
     Node(weight=random.randint(1, 7)) for _ in range(10)
 ]
 
 # create Line Graph
-graph = LineGraph(
+chart = LineChart(
     size=(1200, 300),
     thickness=8,
     fill=(243, 14, 95, 156),
@@ -37,11 +37,11 @@ graph = LineGraph(
     interp='cubic'
 )
 
-# add items
-graph.add_nodes(*nodes)
+# add nodes
+chart.add_nodes(*nodes)
 
 # draw graph
-image = graph.draw()
+image = chart.draw()
 image.show()
 ```
 Result:
