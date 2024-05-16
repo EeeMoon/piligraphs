@@ -25,7 +25,7 @@ nodes = [
     Node(weight=random.randint(1, 7)) for _ in range(10)
 ]
 
-# create Line Graph
+# create a line chart
 chart = LineChart(
     size=(1200, 300),
     thickness=8,
@@ -40,7 +40,7 @@ chart = LineChart(
 # add nodes
 chart.add_nodes(*nodes)
 
-# draw graph
+# draw the graph
 image = chart.draw()
 image.show()
 ```
