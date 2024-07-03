@@ -34,7 +34,7 @@ class NodeGraph(Graph):
                     f" not {type(node).__name__}"
                 )
             
-            self.add_node(node)
+            self._nodes.append(node)
 
     def remove_nodes(self, *nodes: Node) -> None:
         """
@@ -46,4 +46,4 @@ class NodeGraph(Graph):
             Nodes to remove.
         """
         for node in nodes:
-            self.remove_node(node)
+            self._nodes.remove(node)
