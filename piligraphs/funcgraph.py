@@ -48,7 +48,7 @@ class FuncGraph(Graph):
         npoints: int | None = None
     ) -> None:
         """
-        Attributes
+        Parameters
         ----------
         size: `tuple[int, int]`
             Image width and height.
@@ -81,13 +81,10 @@ class FuncGraph(Graph):
     
     @size.setter
     def size(self, value: tuple[int, int]):
-        if isinstance(value, tuple):
-            if len(value) != 2:
-                raise ValueError("size should contain 2 items")
-            self._size = value
-        else:
-            raise TypeError(f"size must be a tuple, not {type(value).__name__}")
-    
+        if len(value) != 2:
+            raise ValueError("size should contain 2 items")
+        self._size = value
+      
     @property
     def func(self) -> Callable[[float], float]:
         """Graph function."""
@@ -95,11 +92,8 @@ class FuncGraph(Graph):
     
     @func.setter
     def func(self, value: Callable[[float], float]):
-        if callable(value):
-            self._func = value
-        else:
-            raise TypeError("func must be callable")
-        
+        self._func = value
+
     @property
     def thickness(self) -> int:
         """Line thickness"""
@@ -107,11 +101,8 @@ class FuncGraph(Graph):
     
     @thickness.setter
     def thickness(self, value: int):
-        if isinstance(value, int):
-            self._thickness = value
-        else:
-            raise TypeError(f"thickness must be an int, not {type(value).__name__}")
-
+        self._thickness = value
+      
     @property
     def outline(self) -> Color:
         """Line color."""
@@ -133,13 +124,10 @@ class FuncGraph(Graph):
     
     @res.setter
     def res(self, value: tuple[int, int]):
-        if isinstance(value, tuple):
-            if len(value) != 2:
-                raise ValueError(f"res should contain 2 items")
-            self._res = value
-        else:
-            raise TypeError(f"res must be a tuple, not {type(value).__name__}")
-
+        if len(value) != 2:
+            raise ValueError(f"res should contain 2 items")
+        self._res = value
+      
     @property
     def npoints(self) -> int | None:
         """Number of points."""
@@ -147,11 +135,8 @@ class FuncGraph(Graph):
     
     @npoints.setter
     def npoints(self, value: int | None):
-        if isinstance(value, int) or value is None:
-            self._npoints = value
-        else:
-            raise TypeError(f"npoints must be an int or None, not {type(value).__name__}")
-    
+        self._npoints = value
+      
     def draw(self) -> Image.Image:
         image = Image.new('RGBA', self.size)
         draw = ImageDraw.Draw(image)

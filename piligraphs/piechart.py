@@ -17,7 +17,7 @@ class PieChart(NodeGraph):
         gap: int = 0
     ) -> None:
         """
-        Attributes
+        Parameters
         ----------
         radius: `int`
             Radius of the chart circle.
@@ -47,11 +47,8 @@ class PieChart(NodeGraph):
     
     @radius.setter
     def radius(self, value: int):
-        if isinstance(value, int):
-            self._radius = value
-        else:
-            raise TypeError(f"radius must be an int, not {type(value).__name__}")
-        
+        self._radius = value
+
     @property
     def thickness(self) -> int | None:
         """Donut-shaped chart thickness."""
@@ -59,10 +56,7 @@ class PieChart(NodeGraph):
     
     @thickness.setter
     def thickness(self, value: int | None):
-        if isinstance(value, int) or value is None:
-            self._thickness = value
-        else:
-            raise TypeError(f"thickness must be an int or None, not {type(value).__name__}")
+        self._thickness = value
         
     @property
     def angle(self) -> int | float:
@@ -71,10 +65,7 @@ class PieChart(NodeGraph):
     
     @angle.setter
     def angle(self, value: int | float):
-        if isinstance(value, (int, float)):
-            self._angle = value
-        else:
-            raise TypeError(f"angle must be an int, not {type(value).__name__}")
+        self._angle = value
         
     @property
     def emboss(self) -> int:
@@ -83,10 +74,7 @@ class PieChart(NodeGraph):
     
     @emboss.setter
     def emboss(self, value: int):
-        if isinstance(value, int):
-            self._emboss = value
-        else:
-            raise TypeError(f"emboss must be an int, not {type(value).__name__}")
+        self._emboss = value
     
     @property
     def gap(self) -> int:
@@ -95,10 +83,7 @@ class PieChart(NodeGraph):
     
     @gap.setter
     def gap(self, value: int):
-        if isinstance(value, int):
-            self._gap = value
-        else:
-            raise TypeError(f"gap must be an int, not {type(value).__name__}")
+        self._gap = value
 
     def draw(self) -> Image.Image:
         radius = self.radius
@@ -118,17 +103,20 @@ class PieChart(NodeGraph):
         gap = self.gap
         clear_co = (0, 0, 0, 0)
         eq_angle = 360 / num_nodes
-        w_angle = 360 / total_weight
 
         offsets = limit(
             weights, 
-            0 if emboss < 0 else abs(emboss), 
-            abs(emboss) if emboss < 0 else 0
+            max(emboss, 0), 
+            min(emboss, 0)
         )
 
         for num, node in enumerate(self.nodes):
             offset = offsets[num]
-            angle = eq_angle if total_weight == 0 else w_angle * node.weight 
+            angle = (
+                eq_angle 
+                if total_weight == 0 else 
+                360 / total_weight * node.weight 
+            )
             end_angle = start_angle + angle
 
             if node.color is not None:

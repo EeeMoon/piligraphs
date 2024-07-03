@@ -23,7 +23,7 @@ class RadarChart(NodeGraph):
         minr: int = 0
     ) -> None:
         """
-        Attributes
+        Parameters
         ----------
         radius: `int`
             Radius of the chart shape.
@@ -66,11 +66,8 @@ class RadarChart(NodeGraph):
     
     @radius.setter
     def radius(self, value: int):
-        if isinstance(value, int):
-            self._radius = value
-        else:
-            raise TypeError(f"radius must be an int, not {type(value).__name__}")
-        
+        self._radius = value
+      
     @property
     def thickness(self) -> int:
         """Line thickness."""
@@ -78,11 +75,8 @@ class RadarChart(NodeGraph):
     
     @thickness.setter
     def thickness(self, value: int):
-        if isinstance(value, int):
-            self._thickness = value
-        else:
-            raise TypeError(f"thickness must be an int, not {type(value).__name__}")
-
+        self._thickness = value
+       
     @property
     def fill(self) -> Color | None:
         """Shape color. If `None`, no shape will be drawn."""
@@ -118,11 +112,8 @@ class RadarChart(NodeGraph):
     
     @pwidth.setter
     def pwidth(self, value: int):
-        if isinstance(value, int):
-            self._pwidth = value
-        else:
-            raise TypeError(f"pwidth must be an int, not {type(value).__name__}")
-    
+        self._pwidth = value
+      
     @property
     def onlysrc(self) -> bool:
         """To draw only source points without interpolated ones."""
@@ -130,11 +121,8 @@ class RadarChart(NodeGraph):
     
     @onlysrc.setter
     def onlysrc(self, value: bool):
-        if isinstance(value, bool):
-            self._onlysrc = value
-        else:
-            raise TypeError(f"onlysrc must be a bool, not {type(value).__name__}")
-
+        self._onlysrc = value
+    
     @property
     def npoints(self) -> int | None:
         """Number of points."""
@@ -142,11 +130,8 @@ class RadarChart(NodeGraph):
     
     @npoints.setter
     def npoints(self, value: int | None):
-        if isinstance(value, int) or value is None:
-            self._npoints = value
-        else:
-            raise TypeError(f"npoints must be an int or None, not {type(value).__name__}")
-        
+        self._npoints = value
+      
     @property
     def interp(self) -> Interpolation:
         """Kind of interpolation."""
@@ -154,10 +139,7 @@ class RadarChart(NodeGraph):
     
     @interp.setter
     def interp(self, value: Interpolation):
-        if isinstance(value, Interpolation):
-            self._interp = value
-        else:
-            raise TypeError("interp must be a valid string")
+        self._interp = value
     
     @property
     def angle(self) -> int | float:
@@ -166,10 +148,7 @@ class RadarChart(NodeGraph):
     
     @angle.setter
     def angle(self, value: int | float):
-        if isinstance(value, (int, float)):
-            self._angle = value
-        else:
-            raise TypeError(f"angle must be an int or float, not {type(value).__name__}")
+        self._angle = value
         
     @property
     def minr(self) -> int:
@@ -178,16 +157,13 @@ class RadarChart(NodeGraph):
     
     @minr.setter
     def minr(self, value: int):
-        if isinstance(value, int):
-            self._minr = value
-        else:
-            raise TypeError(f"minr must be an int, not {type(value).__name__}")
-
+        self._minr = value
+        
     def draw(self) -> Image.Image:
         w = self.radius * 2
         image = Image.new('RGBA', (w, w))
 
-        if len(self.nodes) == 0:
+        if len(self.nodes) in {0, 1, 2}:
             return image
 
         nodes = self.nodes.copy()

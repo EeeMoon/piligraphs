@@ -15,16 +15,13 @@ class Node:
 
     @property
     def weight(self) -> int:
-        """Line thickness."""
-        return self._thickness
+        """Node weight."""
+        return self._weight
     
     @weight.setter
     def weight(self, value: int | float):
-        if isinstance(value, (int, float)):
-            self._weight = value
-        else:
-            raise TypeError(f"weight must be an int or float, not {type(value).__name__}")
-    
+        self._weight = value
+  
     @property
     def color(self) -> Color | None:
         """Node color."""

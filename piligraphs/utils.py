@@ -53,7 +53,7 @@ def interpolate(
     """
     Interpolate a list of points to make a smooth curve.
 
-    Attributes
+    Parameters
     ----------
     points: `list[tuple[int, int]]`
         List of points. Every point must be a tuple containing 2 integers: x and y.
@@ -84,7 +84,7 @@ def limit(
     """
     Limit array to specific range.
 
-    Attributes
+    Parameters
     ----------
     values: `list[int | float]`
         List of values.
@@ -116,7 +116,7 @@ def linear_to_circle(
     """
     Convert linear points to circular.
 
-    Attributes
+    Parameters
     ----------
     points: `list[tuple[int, int]]`
         List of points.

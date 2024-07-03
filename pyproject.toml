@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "piligraphs"
-version = "0.0.5"
+version = "0.0.6"
 homepage = "https://github.com/eeemoon/piligraphs"
 description = "A Pillow extension for drawing graphs and charts."
 authors = ["EeeMoon"]
@@ -14,7 +14,7 @@ include = ["pyproject.toml", "LICENSE"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-Pillow = "^10.3.0"
-numpy = "^1.26.4"
-scipy = "^1.13.0"
-pinkie = "^0.0.1"
+Pillow = "^10.4.0"
+numpy = "^2.0.0"
+scipy = "^1.14.0"
+pinkie = "^0.0.2"

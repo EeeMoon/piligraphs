@@ -22,7 +22,7 @@ class LineChart(NodeGraph):
         minh: int = 0
     ) -> None:
         """
-        Attributes
+        Parameters
         ----------
         size: `tuple[int, int]`
             Image width and height.
@@ -62,12 +62,9 @@ class LineChart(NodeGraph):
     
     @size.setter
     def size(self, value: tuple[int, int]):
-        if isinstance(value, tuple):
-            if len(value) != 2:
-                raise ValueError("size should contain 2 items")
-            self._size = value
-        else:
-            raise TypeError(f"size must be a tuple, not {type(value).__name__}")
+        if len(value) != 2:
+            raise ValueError("size should contain 2 items")
+        self._size = value
         
     @property
     def thickness(self) -> int:
@@ -76,11 +73,8 @@ class LineChart(NodeGraph):
     
     @thickness.setter
     def thickness(self, value: int):
-        if isinstance(value, int):
-            self._thickness = value
-        else:
-            raise TypeError(f"thickness must be an int, not {type(value).__name__}")
-
+        self._thickness = value
+       
     @property
     def fill(self) -> Color | None:
         """Shape color. If `None`, no shape will be drawn."""
@@ -116,10 +110,7 @@ class LineChart(NodeGraph):
     
     @pwidth.setter
     def pwidth(self, value: int):
-        if isinstance(value, int):
-            self._pwidth = value
-        else:
-            raise TypeError(f"pwidth must be an int, not {type(value).__name__}")
+        self._pwidth = value
     
     @property
     def onlysrc(self) -> bool:
@@ -128,11 +119,8 @@ class LineChart(NodeGraph):
     
     @onlysrc.setter
     def onlysrc(self, value: bool):
-        if isinstance(value, bool):
-            self._onlysrc = value
-        else:
-            raise TypeError(f"onlysrc must be a bool, not {type(value).__name__}")
-
+        self._onlysrc = value
+      
     @property
     def npoints(self) -> int | None:
         """Number of points."""
@@ -140,11 +128,8 @@ class LineChart(NodeGraph):
     
     @npoints.setter
     def npoints(self, value: int | None):
-        if isinstance(value, int) or value is None:
-            self._npoints = value
-        else:
-            raise TypeError(f"npoints must be an int or None, not {type(value).__name__}")
-        
+        self._npoints = value
+       
     @property
     def interp(self) -> Interpolation:
         """Kind of interpolation."""
@@ -152,11 +137,8 @@ class LineChart(NodeGraph):
     
     @interp.setter
     def interp(self, value: Interpolation):
-        if isinstance(value, Interpolation):
-            self._interp = value
-        else:
-            raise TypeError("interp must be a valid string")
-    
+        self._interp = value
+
     @property
     def minh(self) -> int:
         """Minimal point height."""
@@ -164,23 +146,20 @@ class LineChart(NodeGraph):
     
     @minh.setter
     def minh(self, value: int):
-        if isinstance(value, int):
-            self._minh = value
-        else:
-            raise TypeError(f"minh must be an int, not {type(value).__name__}")
+        self._minh = value
 
     def draw(self) -> Image.Image:
         image = Image.new('RGBA', self.size)
         num_nodes = len(self.nodes)
 
-        if num_nodes == 0:
+        if num_nodes in {0, 1}:
             return image
         
         draw = ImageDraw.Draw(image)
 
         w, h = self.size
         thickness = self.thickness
-        num = self.npoints if self.npoints else num_nodes
+        num = self.npoints or num_nodes
         max_weight = max((i.weight for i in self.nodes))
         radius = self.pwidth / 2 if self.pwidth > 0 else thickness / 2
 
